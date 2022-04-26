@@ -27,7 +27,8 @@ every_k_points = int(input("every_k_points:"))
 lowPcd_xyz = pcd_xyz.uniform_down_sample(every_k_points)
 print("low datos:", len(lowPcd_xyz.points))
 
-name_x = parSer.data_file[:len(parSer.data_file)-4]+"_low.txt"
+name_x = (
+    parSer.data_file[:len(parSer.data_file)-4]+"_low_"+str(every_k_points)+".txt")
 
 file = pwd_file + name_x
 with open(file, 'w') as f:
