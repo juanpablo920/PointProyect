@@ -3,11 +3,10 @@ class ParamServer:
         # /home/pocampo/
         # /home/sirui/Documents/Johan_Avila/
         # /home/avila/Documentos/
-        self.prefix = "/home/sirui/Documents/Johan_Avila/"
+        self.prefix = "/home/pocampo/"
 
-        # pt04_Cloud_clasificado
         # example
-        # NIR_clasificado_training
-        self.data_file = "example.txt"
+        # PCD_NIR_training_4M_low10
+        self.data_file = "PCD_NIR_training_4M_low10.txt"
 
         self.dsp_types = ["L", "P", "S", "O", "A", "E", "C"]  # Sum

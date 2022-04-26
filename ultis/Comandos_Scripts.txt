@@ -8,13 +8,10 @@
 3 - bash
     bash Init_termial.sh
 
-scp -r pocampo@172.19.18.35:/home/pocampo/PointProyect/data/dpsAnalysis /home/sirui/Documents/Johan_Avila
-scp -r pocampo@172.19.18.35:/home/pocampo/PointProyect/data/validation/NIR_validation.txt /home/sirui/Documents/Johan_Avila
-scp -r /home/sirui/Documents/Johan_Avila/NIR_validation.txt pocampo@172.19.18.35:/home/pocampo/CropSegmentation/data/training 
+scp -r pocampo@172.19.18.35:/home/pocampo/pointProyect/dpsAnalysis /home/sirui/Documents/Johan_Avila
+scp -r /home/sirui/Downloads/Training-20220426T235004Z-001/Training/* pocampo@172.19.18.35:/home/pocampo/pointProyect/data/training 
 
-scp -r pocampo@172.19.18.35:/home/pocampo/CropSegmentation/data/dpsAnalysis /home/sirui/Documents/Johan_Avila
-
-sudo rm -r PointProyect
+sudo rm -r pointProyect
 
 python3 DspAnalysisKn.py
 python3 DspAnalysisVox.py
