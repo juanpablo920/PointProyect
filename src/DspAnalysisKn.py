@@ -52,7 +52,6 @@ class dpsAnalysis:
         with open(file_time, 'w') as f:
             f.write("kn time\n")
 
-    # f
     def calculo_valores_propios(self, matricesCov):
         val_propio_cov = np.linalg.eigvals(matricesCov)
         val_propio = np.sort(val_propio_cov)
@@ -65,7 +64,6 @@ class dpsAnalysis:
         e3 = L3/(Sum_L123)
         return e1, e2, e3
 
-    # f
     def calculo_dsp(self, dsp_type, e1, e2, e3):
         dsp_value = 0
         if(e1 > 0 and e2 > 0 and e3 > 0):
