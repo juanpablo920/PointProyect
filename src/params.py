@@ -8,6 +8,6 @@ class ParamServer:
         # pt04_Cloud_clasificado
         # example
         # NIR_clasificado_training
-        self.data_file = "PCD_NIR_training_4M.txt"
+        self.data_file = "example.txt"
 
         self.dsp_types = ["L", "P", "S", "O", "A", "E", "C"]  # Sum

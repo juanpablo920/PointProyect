@@ -125,18 +125,16 @@ class dpsAnalysis:
                 dsp_value_tmp = [[], [], []]
                 for idx, e_tmp in enumerate(e):
                     e1, e2, e3 = e_tmp
-
                     if(e1 < 0 or e2 < 0 or e3 < 0):
                         continue
-
-                    dsp_value_tmp = self.calculo_dsp(dsp_type, e1, e2, e3)
-
+                    dsp_value = self.calculo_dsp(dsp_type, e1, e2, e3)
                     if self.Classification[idx] == 16:  # Tree
-                        dsp_value_tmp[0].append(dsp_value_tmp)
+                        dsp_value_tmp[0].append(dsp_value)
                     elif self.Classification[idx] == 2:  # ground
-                        dsp_value_tmp[1].append(dsp_value_tmp)
+                        dsp_value_tmp[1].append(dsp_value)
                     elif self.Classification[idx] == 8:  # Model_keypoints
-                        dsp_value_tmp[2].append(dsp_value_tmp)
+                        dsp_value_tmp[2].append(dsp_value)
+
                 tree_mean = np.mean(dsp_value_tmp[0])
                 tree_std = np.std(dsp_value_tmp[0])
                 ground_mean = np.mean(dsp_value_tmp[1])
@@ -210,8 +208,8 @@ class dpsAnalysis:
         print("name_file: ", "P_time.txt")
         print(times)
 
-        kn = np.array(data.kn)
-        time = np.array(data.time)
+        kn = np.array(times.kn)
+        time = np.array(times.time)
 
         plt.figure()
         plt.plot(kn, time, label="time")
