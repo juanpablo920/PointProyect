@@ -1,0 +1,31 @@
+1 - Rosbag 
+    rosbag play -l 04.bag
+
+2 - rostopic
+    rostopic list
+    rostopic info " topico "
+
+3 - bash
+    bash Init_termial.sh
+
+scp -r pocampo@172.19.18.35:/home/pocampo/PointProyect/data/dpsAnalysis /home/sirui/Documents/Johan_Avila
+scp -r pocampo@172.19.18.35:/home/pocampo/PointProyect/data/validation/NIR_validation.txt /home/sirui/Documents/Johan_Avila
+scp -r /home/sirui/Documents/Johan_Avila/NIR_validation.txt pocampo@172.19.18.35:/home/pocampo/CropSegmentation/data/training 
+
+scp -r pocampo@172.19.18.35:/home/pocampo/CropSegmentation/data/dpsAnalysis /home/sirui/Documents/Johan_Avila
+
+sudo rm -r PointProyect
+
+python3 DspAnalysisKn.py
+python3 DspAnalysisVox.py
+
+python3 import_prueba_txt.py
+python3 Prueba_ing_2metodo.py
+
+ssh pocampo@$uimach
+
+
+- para crear un pc en paralelo 
+screen -l 
+screen -R
+exit 

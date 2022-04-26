@@ -1,0 +1,25 @@
+-Credenciales
+
+	ip: 172.19.18.35
+	usser: pocampo
+	password: p.123
+	OS Ubuntu 20.04
+	ROS version Noetic
+	Disco duro = muy pequeño
+	Núcleos:8
+	RAM: 64GB
+
+-instalaciones
+	- caja---- Para ver graficamente la terminal
+			pip install caja
+	sudo pip3 install sklearn
+	sudo apt-get install python3-pip
+	sudo pip3 install progressbar2
+	pip3 install open3d
+	sudo apt install python3-testresources ---> para poder actualizar el open3d:obtiene recursos de prueba
+
+
+
+
+
+	
