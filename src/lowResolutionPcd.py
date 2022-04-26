@@ -28,9 +28,19 @@ colors[pos_Model_keypoints, :] = [0.624, 0.624, 0.624]
 
 pcd_xyz.colors = o3d.utility.Vector3dVector(colors)
 print("datos:", len(pcd_xyz.points))
-o3d.visualization.draw_geometries([pcd_xyz])
+# o3d.visualization.draw_geometries([pcd_xyz])
 
-every_k_points = int(input("every_k_points:"))
-lowPcd_xyz = pcd_xyz.uniform_down_sample(every_k_points)
+# every_k_points = int(input("every_k_points:"))
+# lowPcd_xyz = pcd_xyz.uniform_down_sample(every_k_points)
+# print("low datos:", len(lowPcd_xyz.points))
+# o3d.visualization.draw_geometries([lowPcd_xyz])
+
+every_k_points = float(input("every_k_points:"))
+lowPcd_xyz, idx, lis = pcd_xyz.voxel_down_sample_and_trace(
+    every_k_points, pcd_xyz.get_min_bound(), pcd_xyz.get_max_bound(), False)
 print("low datos:", len(lowPcd_xyz.points))
-o3d.visualization.draw_geometries([lowPcd_xyz])
+print(idx.shape)
+print(len(lis))
+print(idx[:3])
+print(lis[:3])
+# o3d.visualization.draw_geometries([lowPcd_xyz])

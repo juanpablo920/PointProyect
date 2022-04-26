@@ -125,16 +125,18 @@ class dpsAnalysis:
                 dsp_value_tmp = [[], [], []]
                 for idx, e_tmp in enumerate(e):
                     e1, e2, e3 = e_tmp
-                    if self.Classification[idx] == 16:  # Tree
-                        dsp_value_tmp[0].append(
-                            self.calculo_dsp(dsp_type, e1, e2, e3))
-                    elif self.Classification[idx] == 2:  # ground
-                        dsp_value_tmp[1].append(
-                            self.calculo_dsp(dsp_type, e1, e2, e3))
-                    elif self.Classification[idx] == 8:  # Model_keypoints
-                        dsp_value_tmp[2].append(
-                            self.calculo_dsp(dsp_type, e1, e2, e3))
 
+                    if(e1 < 0 or e2 < 0 or e3 < 0):
+                        continue
+
+                    dsp_value_tmp = self.calculo_dsp(dsp_type, e1, e2, e3)
+
+                    if self.Classification[idx] == 16:  # Tree
+                        dsp_value_tmp[0].append(dsp_value_tmp)
+                    elif self.Classification[idx] == 2:  # ground
+                        dsp_value_tmp[1].append(dsp_value_tmp)
+                    elif self.Classification[idx] == 8:  # Model_keypoints
+                        dsp_value_tmp[2].append(dsp_value_tmp)
                 tree_mean = np.mean(dsp_value_tmp[0])
                 tree_std = np.std(dsp_value_tmp[0])
                 ground_mean = np.mean(dsp_value_tmp[1])

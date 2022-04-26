@@ -52,7 +52,6 @@ class dpsAnalysis:
         with open(file_time, 'w') as f:
             f.write("voxel time\n")
 
-    # f
     def calculo_valores_propios(self, matricesCov):
         val_propio_cov = np.linalg.eigvals(matricesCov)
         val_propio = np.sort(val_propio_cov)
@@ -65,7 +64,6 @@ class dpsAnalysis:
         e3 = L3/(Sum_L123)
         return e1, e2, e3
 
-    # f
     def calculo_dsp(self, dsp_type, e1, e2, e3):
         dsp_value = 0
         if(e1 > 0 and e2 > 0 and e3 > 0):
@@ -125,15 +123,18 @@ class dpsAnalysis:
                 dsp_value_tmp = [[], [], []]
                 for idx, e_tmp in enumerate(e):
                     e1, e2, e3 = e_tmp
+
+                    if(e1 < 0 or e2 < 0 or e3 < 0):
+                        continue
+
+                    dsp_value_tmp = self.calculo_dsp(dsp_type, e1, e2, e3)
+
                     if self.Classification[idx] == 16:  # Tree
-                        dsp_value_tmp[0].append(
-                            self.calculo_dsp(dsp_type, e1, e2, e3))
+                        dsp_value_tmp[0].append(dsp_value_tmp)
                     elif self.Classification[idx] == 2:  # ground
-                        dsp_value_tmp[1].append(
-                            self.calculo_dsp(dsp_type, e1, e2, e3))
+                        dsp_value_tmp[1].append(dsp_value_tmp)
                     elif self.Classification[idx] == 8:  # Model_keypoints
-                        dsp_value_tmp[2].append(
-                            self.calculo_dsp(dsp_type, e1, e2, e3))
+                        dsp_value_tmp[2].append(dsp_value_tmp)
 
                 tree_mean = np.mean(dsp_value_tmp[0])
                 tree_std = np.std(dsp_value_tmp[0])
