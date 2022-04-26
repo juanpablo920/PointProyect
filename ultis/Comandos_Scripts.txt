@@ -24,7 +24,7 @@ python3 Prueba_ing_2metodo.py
 
 ssh pocampo@$uimach
 
-
+kill https://osluca.uca.es/noticia/4-maneras-de-cerrar-aplicaciones-que-no-responden-en-ubuntu/
 - para crear un pc en paralelo 
 screen -l 
 screen -R
