@@ -230,7 +230,7 @@ class dpsAnalysis:
         time = np.array(times.time)
 
         plt.figure()
-        plt.plot(kn, time, label="time")
+        plt.plot(kn, time, "C0", label="time")
         plt.title("time_vs_kn")
         plt.xlabel('kn')
         plt.ylabel('time')

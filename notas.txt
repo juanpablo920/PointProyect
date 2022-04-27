@@ -1,8 +1,11 @@
-- PCD_NIR_training_4M_low10 
-    Ya se hizo radius: 0.1:7:0.1
-    falta terminar los kn 
-
 - PCD_NIR_training_4M_low50 
-    ya se hizo el Kn=5355
-    radius = a
-    
+    Kn = 85:5355:85
+    radius = 0.1:5:0.1
+
+- PCD_NIR_training_4M_low16
+    Kn = - null
+    radius = 0.1:5:0.1 - null
+
+- PCD_NIR_training_4M_low10 
+    radius = 0.1:5:0.1 
+    falta terminar los kn - null

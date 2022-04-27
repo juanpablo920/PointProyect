@@ -1,5 +1,4 @@
 import os
-from colorclass import Color
 import numpy as np
 import open3d as o3d
 import pandas as pd
