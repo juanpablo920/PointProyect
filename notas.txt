@@ -1,0 +1,5 @@
+- PCD_NIR_training_4M_low10 
+    fata terminar los kn 
+    pasar los vox a radius
+
+- PCD_NIR_training_4M_low50 
