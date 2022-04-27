@@ -3,3 +3,4 @@
     pasar los vox a radius
 
 - PCD_NIR_training_4M_low50 
+    
