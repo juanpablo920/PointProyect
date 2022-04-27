@@ -1,6 +1,8 @@
 - PCD_NIR_training_4M_low10 
-    fata terminar los kn 
-    pasar los vox a radius
+    Ya se hizo radius: 0.1:7:0.1
+    falta terminar los kn 
 
 - PCD_NIR_training_4M_low50 
+    ya se hizo el Kn=5355
+    radius = a
     
