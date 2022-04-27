@@ -187,12 +187,32 @@ class dpsAnalysis:
             #Marcador - Suelo
             P32 = np.array(data.P32)
 
+            max_P12 = np.amax(P12)
+            max_P13 = np.amax(P13)
+            max_P32 = np.amax(P32)
+
+            posMax_P12 = np.where(P12 == max_P12)
+            posMax_P13 = np.where(P13 == max_P13)
+            posMax_P32 = np.where(P32 == max_P32)
+
             name_x = name_file[:len(name_file)-4]
 
             plt.figure()
-            plt.plot(kn, P12, label="Arbol_suelo")
-            plt.plot(kn, P13, label="Arbol_Marcador")
-            plt.plot(kn, P32, label="Marcador_Suelo")
+            plt.plot(kn, P12, 'C0', label="Arbol_suelo")
+            plt.plot(
+                kn[posMax_P12], P12[posMax_P12],
+                'vC0', label="P(max): {0:.2f}".format(max_P12))
+
+            plt.plot(kn, P13, 'C1', label="Arbol_Marcador")
+            plt.plot(
+                kn[posMax_P13], P13[posMax_P13],
+                'vC1', label="P(max): {0:.2f}".format(max_P13))
+
+            plt.plot(kn, P32, 'C2', label="Marcador_Suelo")
+            plt.plot(
+                kn[posMax_P32], P32[posMax_P32],
+                'vC2', label="P(max): {0:.2f}".format(max_P32))
+
             plt.title(name_x + "_vs_kn")
             plt.xlabel('kn')
             plt.ylabel('P')

@@ -1,4 +1,5 @@
 import os
+from colorclass import Color
 import numpy as np
 import open3d as o3d
 import pandas as pd
@@ -186,12 +187,32 @@ class dpsAnalysis:
             #Marcador - Suelo
             P32 = np.array(data.P32)
 
+            max_P12 = np.amax(P12)
+            max_P13 = np.amax(P13)
+            max_P32 = np.amax(P32)
+
+            posMax_P12 = np.where(P12 == max_P12)
+            posMax_P13 = np.where(P13 == max_P13)
+            posMax_P32 = np.where(P32 == max_P32)
+
             name_x = name_file[:len(name_file)-4]
 
             plt.figure()
-            plt.plot(radius, P12, label="Arbol_suelo")
-            plt.plot(radius, P13, label="Arbol_Marcador")
-            plt.plot(radius, P32, label="Marcador_Suelo")
+            plt.plot(radius, P12, 'C0', label="Arbol_suelo")
+            plt.plot(
+                radius[posMax_P12], P12[posMax_P12],
+                'vC0', label="P(max): {0:.2f}".format(max_P12))
+
+            plt.plot(radius, P13, 'C1', label="Arbol_Marcador")
+            plt.plot(
+                radius[posMax_P13], P13[posMax_P13],
+                'vC1', label="P(max): {0:.2f}".format(max_P13))
+
+            plt.plot(radius, P32, 'C2', label="Marcador_Suelo")
+            plt.plot(
+                radius[posMax_P32], P32[posMax_P32],
+                'vC2', label="P(max): {0:.2f}".format(max_P32))
+
             plt.title(name_x + "_vs_radius")
             plt.xlabel('radius')
             plt.ylabel('P')
@@ -209,7 +230,7 @@ class dpsAnalysis:
         time = np.array(times.time)
 
         plt.figure()
-        plt.plot(radius, time, label="time")
+        plt.plot(radius, time, "C0", label="time")
         plt.title("time_vs_radius")
         plt.xlabel('radius')
         plt.ylabel('time')
