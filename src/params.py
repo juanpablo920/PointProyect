@@ -8,6 +8,6 @@ class ParamServer:
 
         # example
         # PCD_NIR_training_4M_low10
-        self.data_file = "PCD_NIR_training_4M_low33.txt"
+        self.data_file = "PCD_NIR_training_4M.txt"
 
         self.dsp_types = ["L", "P", "S", "O", "A", "E", "C"]  # Sum
