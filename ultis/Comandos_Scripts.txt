@@ -28,3 +28,7 @@ kill https://osluca.uca.es/noticia/4-maneras-de-cerrar-aplicaciones-que-no-respo
 screen -l 
 screen -R
 exit 
+
+
+
+scp -r /home/sirui/Downloads/Training-20220426T235004Z-001/Training/* johanp@172.17.100.6:/home/johanp/Descargas
