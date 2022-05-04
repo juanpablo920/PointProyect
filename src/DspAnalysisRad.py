@@ -54,16 +54,15 @@ class dpsAnalysis:
 
     def calculo_valores_propios(self, matricesCov):
         val_propio_cov = np.linalg.eigvals(matricesCov)
-
         val_propio = np.sort(val_propio_cov)
         L1 = val_propio[2]
         L2 = val_propio[1]
         L3 = val_propio[0]
-        if(L3 <= 0 ):
+        if(L3 <= 0):
             L3 = 1e-8
-            if(L2 <= 0 ):
+            if(L2 <= 0):
                 L2 = 1e-8
-                if(L1 <= 0 ):
+                if(L1 <= 0):
                     L1 = 1e-8
         Sum_L123 = (L1+L2+L3)
         e1 = L1/(Sum_L123)
@@ -134,7 +133,7 @@ class dpsAnalysis:
                     dsp_value = self.calculo_dsp(dsp_type, e1, e2, e3)
                     if(e1 < 0 or e2 < 0 or e3 < 0):
                         continue
-                    
+
                     if self.Classification[idx] == 16:  # Tree
                         dsp_value_tmp[0].append(dsp_value)
                     elif self.Classification[idx] == 2:  # ground
