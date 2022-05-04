@@ -155,14 +155,105 @@ class dpsAnalysis:
             time = tm.time() - time_inicio
             self.save_data_P_time(radius, time)
 
-    def view_grafico_gauss(self):
-        print("view_grafico_gauss")
-        plt.rcParams['agg.path.chunksize'] = 10000
-
+    def graph_P_dps_type(self, dps_type, P12, P13, P32, radius):
         pwd_imagen = ""
         pwd_imagen += self.parSer.prefix
-        pwd_imagen += "pointProyect/dpsAnalysis/radius/images/"
+        pwd_imagen += "pointProyect/dpsAnalysis/radius/images/graphics_P/"
 
+        max_P12 = np.amax(P12)
+        max_P13 = np.amax(P13)
+        max_P32 = np.amax(P32)
+
+        posMax_P12 = np.where(P12 == max_P12)
+        posMax_P13 = np.where(P13 == max_P13)
+        posMax_P32 = np.where(P32 == max_P32)
+
+        plt.figure()
+        plt.plot(radius, P12, 'C0', label="Arbol_suelo")
+        plt.plot(
+            radius[posMax_P12], P12[posMax_P12],
+            'vC0', label="P(max): {0:.2f}".format(max_P12))
+
+        plt.plot(radius, P13, 'C1', label="Arbol_Marcador")
+        plt.plot(
+            radius[posMax_P13], P13[posMax_P13],
+            'vC1', label="P(max): {0:.2f}".format(max_P13))
+
+        plt.plot(radius, P32, 'C2', label="Marcador_Suelo")
+        plt.plot(
+            radius[posMax_P32], P32[posMax_P32],
+            'vC2', label="P(max): {0:.2f}".format(max_P32))
+
+        plt.title(dps_type + "_vs_radius")
+        plt.xlabel('radius')
+        plt.ylabel('P')
+        plt.grid(True)
+        plt.legend()
+        plt.savefig(pwd_imagen + dps_type + "_vs_radius.png")
+        plt.clf()
+
+    def graph_average_P_dps_type(self, dps_type, P12, P13, P32, radius):
+        pwd_imagen = ""
+        pwd_imagen += self.parSer.prefix
+        pwd_imagen += "pointProyect/dpsAnalysis/radius/images/average_P/"
+
+        average_P = (P12 + P13 + P32)/3
+        max_average = np.amax(average_P)
+        posMax_average = np.where(average_P == max_average)
+
+        plt.figure()
+        plt.plot(radius, average_P, "C0", label="average_P")
+        plt.plot(
+            radius[posMax_average], average_P[posMax_average],
+            'vC0', label="average(max): {0:.2f} \n radius: {1:.2f}".format(max_average, radius[posMax_average][0]))
+        plt.title("average_P_vs_radius")
+        plt.xlabel('radius')
+        plt.ylabel('average_P')
+        plt.grid(True)
+        plt.legend()
+        plt.savefig(pwd_imagen + "average_"+dps_type+"_vs_radius.png")
+        plt.clf()
+
+        return average_P
+
+    def graph_selection_Radius(self, averages_P, radius):
+        pwd_imagen = ""
+        pwd_imagen += self.parSer.prefix
+        pwd_imagen += "pointProyect/dpsAnalysis/radius/images/selection_Radius/"
+
+        max_averages_P = np.amax(averages_P)
+        posMax_averages = np.where(averages_P == max_averages_P)
+
+        plt.figure()
+        plt.plot(radius, averages_P, "C0", label="averages_P")
+        plt.plot(
+            radius[posMax_averages], averages_P[posMax_averages],
+            'vC0', label="average(max): {0:.2f} \n radius: {1:.2f}".format(max_averages_P, radius[posMax_averages][0]))
+        plt.title("averages_P_vs_radius")
+        plt.xlabel('radius')
+        plt.ylabel('averages_P')
+        plt.grid(True)
+        plt.legend()
+        plt.savefig(pwd_imagen + "averages_P_vs_radius.png")
+        plt.clf()
+
+    def graph_time_P(self, time, radius):
+        pwd_imagen = ""
+        pwd_imagen += self.parSer.prefix
+        pwd_imagen += "pointProyect/dpsAnalysis/radius/images/graphics_P/"
+
+        plt.figure()
+        plt.plot(radius, time, "C0", label="time")
+        plt.title("time_vs_radius")
+        plt.xlabel('radius')
+        plt.ylabel('time')
+        plt.grid(True)
+        plt.legend()
+        plt.savefig(pwd_imagen + "time_vs_radius.png")
+        plt.clf()
+
+    def graphics(self):
+        print("graphics")
         pwd_files = ""
         pwd_files += self.parSer.prefix
         pwd_files += "pointProyect/dpsAnalysis/radius/data/"
@@ -171,6 +262,7 @@ class dpsAnalysis:
         name_files.remove("data.txt")
         name_files.remove("P_time.txt")
 
+        list_averages_P = []
         for name_file in name_files:
             data = pd.read_csv(pwd_files+name_file, sep=" ", header=0)
             print("-"*10)
@@ -186,39 +278,12 @@ class dpsAnalysis:
             #Marcador - Suelo
             P32 = np.array(data.P32)
 
-            max_P12 = np.amax(P12)
-            max_P13 = np.amax(P13)
-            max_P32 = np.amax(P32)
+            dps_type = name_file[:len(name_file)-4]
+            self.graph_P_dps_type(dps_type, P12, P13, P32, radius)
+            average_P_tmp = self.graph_average_P_dps_type(
+                dps_type, P12, P13, P32, radius)
 
-            posMax_P12 = np.where(P12 == max_P12)
-            posMax_P13 = np.where(P13 == max_P13)
-            posMax_P32 = np.where(P32 == max_P32)
-
-            name_x = name_file[:len(name_file)-4]
-
-            plt.figure()
-            plt.plot(radius, P12, 'C0', label="Arbol_suelo")
-            plt.plot(
-                radius[posMax_P12], P12[posMax_P12],
-                'vC0', label="P(max): {0:.2f}".format(max_P12))
-
-            plt.plot(radius, P13, 'C1', label="Arbol_Marcador")
-            plt.plot(
-                radius[posMax_P13], P13[posMax_P13],
-                'vC1', label="P(max): {0:.2f}".format(max_P13))
-
-            plt.plot(radius, P32, 'C2', label="Marcador_Suelo")
-            plt.plot(
-                radius[posMax_P32], P32[posMax_P32],
-                'vC2', label="P(max): {0:.2f}".format(max_P32))
-
-            plt.title(name_x + "_vs_radius")
-            plt.xlabel('radius')
-            plt.ylabel('P')
-            plt.grid(True)
-            plt.legend()
-            plt.savefig(pwd_imagen + name_x + "_vs_radius.png")
-            plt.clf()
+            list_averages_P.append(average_P_tmp)
 
         times = pd.read_csv(pwd_files+"P_time.txt", sep=" ", header=0)
         print("-"*10)
@@ -227,23 +292,21 @@ class dpsAnalysis:
 
         radius = np.array(times.radius)
         time = np.array(times.time)
+        self.graph_time_P(time, radius)
 
-        plt.figure()
-        plt.plot(radius, time, "C0", label="time")
-        plt.title("time_vs_radius")
-        plt.xlabel('radius')
-        plt.ylabel('time')
-        plt.grid(True)
-        plt.legend()
-        plt.savefig(pwd_imagen + "time_vs_radius.png")
-        plt.clf()
+        # averages_P = list_averages_P[0]
+        # for i in range(1, len(list_averages_P)):
+        #     averages_P = averages_P + list_averages_P[i]
+
+        averages_P = np.sum(list_averages_P, axis=0)/len(list_averages_P)
+        self.graph_selection_Radius(averages_P, radius)
 
 
 if __name__ == '__main__':
     dps_analysis = dpsAnalysis()
 
     print("Opcion_1: generar archivos P")
-    print("Opcion_2: graficas P")
+    print("Opcion_2: graficas")
 
     opcion = input("opcion: ")
 
@@ -267,7 +330,7 @@ if __name__ == '__main__':
     elif opcion == "2":
         print("="*10)
         print(" graficas P")
-        dps_analysis.view_grafico_gauss()
+        dps_analysis.graphics()
     else:
         print("="*10)
         print("no es una opción '{opcion}'")
