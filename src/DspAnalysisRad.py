@@ -65,14 +65,13 @@ class dpsAnalysis:
         return e1, e2, e3
 
     def calculo_dsp(self, dsp_type, e1, e2, e3):
-        global a
         dsp_value = 0
         if(e1 > 0 and e2 > 0 and e3 > 0):
             if dsp_type == "L":
                 dsp_value = (e1-e2)/(e1)
             elif dsp_type == "P":
                 dsp_value = (e2-e3)/(e1)
-                print(dsp_type)
+                self.parSer.a.append(dsp_value)
             elif dsp_type == "S":
                 dsp_value = e3/e1
             elif dsp_type == "O":
@@ -86,7 +85,6 @@ class dpsAnalysis:
                 dsp_value = e1 + e2 + e3
             elif dsp_type == "C":
                 dsp_value = e3/(e1+e2+e3)
-        a.append(dsp_value)
         return dsp_value
 
     def save_data_P_dps_type(self, dsp_type, radius, P12, P13, P32):
@@ -157,6 +155,7 @@ class dpsAnalysis:
             dsp_value_tmp = None
             time = tm.time() - time_inicio
             self.save_data_P_time(radius, time)
+        print(self.parSer.a)
 
     def graph_P_dps_type(self, dps_type, P12, P13, P32, radius):
         pwd_imagen = ""
