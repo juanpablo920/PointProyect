@@ -124,9 +124,10 @@ class dpsAnalysis:
                 dsp_value_tmp = [[], [], []]
                 for idx, e_tmp in enumerate(e):
                     e1, e2, e3 = e_tmp
+                    dsp_value = self.calculo_dsp(dsp_type, e1, e2, e3)
                     if(e1 < 0 or e2 < 0 or e3 < 0):
                         continue
-                    dsp_value = self.calculo_dsp(dsp_type, e1, e2, e3)
+                    
                     if self.Classification[idx] == 16:  # Tree
                         dsp_value_tmp[0].append(dsp_value)
                     elif self.Classification[idx] == 2:  # ground
