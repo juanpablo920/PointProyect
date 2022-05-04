@@ -65,12 +65,14 @@ class dpsAnalysis:
         return e1, e2, e3
 
     def calculo_dsp(self, dsp_type, e1, e2, e3):
+        global a
         dsp_value = 0
         if(e1 > 0 and e2 > 0 and e3 > 0):
             if dsp_type == "L":
                 dsp_value = (e1-e2)/(e1)
             elif dsp_type == "P":
                 dsp_value = (e2-e3)/(e1)
+                print(dsp_type)
             elif dsp_type == "S":
                 dsp_value = e3/e1
             elif dsp_type == "O":
@@ -84,6 +86,7 @@ class dpsAnalysis:
                 dsp_value = e1 + e2 + e3
             elif dsp_type == "C":
                 dsp_value = e3/(e1+e2+e3)
+        a.append(dsp_value)
         return dsp_value
 
     def save_data_P_dps_type(self, dsp_type, radius, P12, P13, P32):
