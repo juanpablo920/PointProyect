@@ -54,10 +54,17 @@ class dpsAnalysis:
 
     def calculo_valores_propios(self, matricesCov):
         val_propio_cov = np.linalg.eigvals(matricesCov)
+
         val_propio = np.sort(val_propio_cov)
         L1 = val_propio[2]
         L2 = val_propio[1]
         L3 = val_propio[0]
+        if(L1 <= 0 ):
+            L1 = 1e-8
+        if(L2 <= 0 ):
+            L2 = 1e-8
+        if(L3 <= 0 ):
+            L3 = 1e-8
         Sum_L123 = (L1+L2+L3)
         e1 = L1/(Sum_L123)
         e2 = L2/(Sum_L123)
