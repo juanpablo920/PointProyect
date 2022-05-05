@@ -163,6 +163,7 @@ class dpsAnalysis:
             time = tm.time() - time_inicio
             self.save_data_P_time(radius, time)
         print(self.parSer.a)
+        print(np.shape(self.parSer.a))
 
     def graph_P_dps_type(self, dps_type, P12, P13, P32, radius):
         pwd_imagen = ""
