@@ -4,7 +4,7 @@ class ParamServer:
         # /home/sirui/Documents/Johan_Avila/
         # /home/avila/Documentos/
         # /home/juanpablo
-        self.prefix = "/home/juanpablo"
+        self.prefix = "/home/juanpablo/"
 
         # example
         # PCD_NIR_training_4M_low10
