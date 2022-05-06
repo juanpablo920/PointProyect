@@ -170,9 +170,9 @@ class dpsAnalysis:
                 Clase1dls=norm.pdf(b1,tree_mean,tree_std)
                 Clase2dls=norm.pdf(b2,ground_mean,ground_std)
                 Clase3dls=norm.pdf(b3,marcador_mean,marcador_std)
-                plt.plot(b1, Clase1dls,'b')
-                plt.plot(b2, Clase2dls,'r')
-                plt.plot(b3, Clase3dls,'g')
+                plt.plot(b1, Clase1dls,'b', label="Arbol")
+                plt.plot(b2, Clase2dls,'r', label="Tierra")
+                plt.plot(b3, Clase3dls,'g', label="Marcador")
                 plt.title('Distribución normal longitud sefalo')
                 plt.ylabel('Probabilidad')
                 plt.xlabel('Valores')
@@ -185,9 +185,7 @@ class dpsAnalysis:
         
         plt.hist(self.parSer.a, bins=255)
         plt.show()
-        
-        
-                                                                                                                           
+                                                                                                                        
     def graph_P_dps_type(self, dps_type, P12, P13, P32, radius):
         pwd_imagen = ""
         pwd_imagen += self.parSer.prefix
