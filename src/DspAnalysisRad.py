@@ -159,10 +159,11 @@ class dpsAnalysis:
                 P32 = (
                     np.abs(marcador_mean - ground_mean)) / (3*(marcador_std + ground_std))
                 self.save_data_P_dps_type(dsp_type, radius, P12, P13, P32)
-
-                SL_d0 = norm(loc = tree_mean, scale = tree_std)
-                SL_d1 = norm(loc = ground_mean, scale = ground_std)
-                SL_d2 = norm(loc = marcador_mean, scale = marcador_std)
+                print(tree_mean)
+                print(tree_std)
+                SL_d0 = norm(loc = tree_mean[1], scale = tree_std)
+                SL_d1 = norm(loc = ground_mean[1], scale = ground_std)
+                SL_d2 = norm(loc = marcador_mean[1], scale = marcador_std)
                 x1 = np.arange(0.5, 1.25, 0.1)
                 #plot the pdfs of these normal distributions
                 plt.figure()
