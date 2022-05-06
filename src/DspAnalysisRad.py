@@ -166,9 +166,6 @@ class dpsAnalysis:
         
         plt.hist(self.parSer.a, bins=255)
         plt.show()
-        dsp_value_tmp[0].sort()
-        dsp_value_tmp[1].sort()
-        dsp_value_tmp[2].sort()
         cl_tree=norm.pdf(dls1,tree_mean,tree_std)
         cl_ground=norm.pdf(dls2,ground_mean,ground_std)
         cl_marcador=norm.pdf(dls3,marcador_mean,marcador_std)
