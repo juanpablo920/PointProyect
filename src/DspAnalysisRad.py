@@ -150,6 +150,7 @@ class dpsAnalysis:
                 marcador_std = np.std(dsp_value_tmp[2])
                 print(len(dsp_value_tmp[0]))
                 print(len(dsp_value_tmp[1]))
+                print(len(dsp_value_tmp[2]))
                 #Arbol - suelo
                 P12 = (
                     np.abs(tree_mean - ground_mean)) / (3*(tree_std + ground_std))
