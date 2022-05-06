@@ -159,6 +159,21 @@ class dpsAnalysis:
                 P32 = (
                     np.abs(marcador_mean - ground_mean)) / (3*(marcador_std + ground_std))
                 self.save_data_P_dps_type(dsp_type, radius, P12, P13, P32)
+
+                SL_d0 = norm(loc = tree_mean, scale = tree_std)
+                SL_d1 = norm(loc = ground_mean, scale = ground_std)
+                SL_d2 = norm(loc = marcador_mean, scale = marcador_std)
+                x1 = np.arange(0.5, 1.25, 0.1)
+                #plot the pdfs of these normal distributions
+                plt.figure()
+                plt.clf() 
+                plt.plot(x1, SL_d0, 'g', label="Arbol" )
+                plt.plot(x1, SL_d1, 'b', label="Tierra" )
+                plt.plot(x1, SL_d2, 'r', label="Marcador" )
+                plt.title("Distribucion normal: Planaridad")
+                plt.legend()
+                plt.show()
+                
             e = None
             dsp_value_tmp = None
             time = tm.time() - time_inicio
@@ -166,19 +181,7 @@ class dpsAnalysis:
         
         plt.hist(self.parSer.a, bins=255)
         plt.show()
-        SL_d0 = norm(loc = tree_mean, scale = tree_std)
-        SL_d1 = norm(loc = ground_mean, scale = ground_std)
-        SL_d2 = norm(loc = marcador_mean, scale = marcador_std)
-        x1 = np.arange(0.5, 1.25, 0.1)
-        #plot the pdfs of these normal distributions
-        plt.figure()
-        plt.clf() 
-        plt.plot(x1, SL_d0, 'g', label="Arbol" )
-        plt.plot(x1, SL_d1, 'b', label="Tierra" )
-        plt.plot(x1, SL_d2, 'r', label="Marcador" )
-        plt.title("Distribucion normal: Planaridad")
-        plt.legend()
-        plt.show()
+        
         
                                                                                                                            
     def graph_P_dps_type(self, dps_type, P12, P13, P32, radius):
