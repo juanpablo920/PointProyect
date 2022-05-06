@@ -173,9 +173,9 @@ class dpsAnalysis:
         #plot the pdfs of these normal distributions
         plt.figure()
         plt.clf() 
-        plt.plot(x1, SL_d0.pdf(x1), 'g', label="Arbol" )
-        plt.plot(x1, SL_d1.pdf(x1), 'b', label="Tierra" )
-        plt.plot(x1, SL_d2.pdf(x1), 'r', label="Marcador" )
+        plt.plot(x1, SL_d0, 'g', label="Arbol" )
+        plt.plot(x1, SL_d1, 'b', label="Tierra" )
+        plt.plot(x1, SL_d2, 'r', label="Marcador" )
         plt.title("Distribucion normal: Planaridad")
         plt.legend()
         plt.show()
