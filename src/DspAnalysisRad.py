@@ -148,9 +148,7 @@ class dpsAnalysis:
                 ground_std = np.std(dsp_value_tmp[1])
                 marcador_mean = np.mean(dsp_value_tmp[2])
                 marcador_std = np.std(dsp_value_tmp[2])
-                print(len(dsp_value_tmp[0]))
-                print(len(dsp_value_tmp[1]))
-                print(len(dsp_value_tmp[2]))
+
                 #Arbol - suelo
                 P12 = (
                     np.abs(tree_mean - ground_mean)) / (3*(tree_std + ground_std))
@@ -162,18 +160,22 @@ class dpsAnalysis:
                     np.abs(marcador_mean - ground_mean)) / (3*(marcador_std + ground_std))
                 self.save_data_P_dps_type(dsp_type, radius, P12, P13, P32)
         
-                SL_d0 = norm(loc = tree_mean, scale = tree_std)
-                SL_d1 = norm(loc = ground_mean, scale = ground_std)
-                SL_d2 = norm(loc = marcador_mean, scale = marcador_std)
-                x1 = np.arange(0.5, 1.25, 0.1)
-                #plot the pdfs of these normal distributions
-                plt.figure()
-                plt.clf() 
-                plt.plot(x1, SL_d0, 'g', label="Arbol" )
-                plt.plot(x1, SL_d1, 'b', label="Tierra" )
-                plt.plot(x1, SL_d2, 'r', label="Marcador" )
-                plt.title("Distribucion normal: Planaridad")
-                plt.legend()
+                b1=dsp_value_tmp[0]
+                b2=dsp_value_tmp[1]
+                b3=dsp_value_tmp[2]
+                b1.sort()
+                b2.sort()
+                b3.sort()
+
+                Clase1dls=norm.pdf(b1,tree_mean,tree_std)
+                Clase2dls=norm.pdf(b2,ground_mean,ground_std)
+                Clase3dls=norm.pdf(b3,marcador_mean,marcador_std)
+                plt.plot(b1, Clase1dls,'b')
+                plt.plot(b2, Clase2dls,'r')
+                plt.plot(b3, Clase3dls,'g')
+                plt.title('Distribución normal longitud sefalo')
+                plt.ylabel('Probabilidad')
+                plt.xlabel('Valores')
                 plt.show()
                 
             e = None
