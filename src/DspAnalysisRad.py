@@ -136,11 +136,11 @@ class dpsAnalysis:
                         continue
 
                     if self.Classification[idx] == 16:  # Tree
-                        dsp_value_tmp[0].append(self.parSer.a)
+                        dsp_value_tmp[0].append(dsp_value)
                     elif self.Classification[idx] == 2:  # ground
-                        dsp_value_tmp[1].append(self.parSer.a)
+                        dsp_value_tmp[1].append(dsp_value)
                     elif self.Classification[idx] == 8:  # Model_keypoints
-                        dsp_value_tmp[2].append(self.parSer.a)
+                        dsp_value_tmp[2].append(dsp_value)
 
                 tree_mean = np.mean(dsp_value_tmp[0])
                 tree_std = np.std(dsp_value_tmp[0])
@@ -173,7 +173,7 @@ class dpsAnalysis:
                 plt.title("Distribucion normal: Planaridad")
                 plt.legend()
                 plt.show()
-
+                
             e = None
             dsp_value_tmp = None
             time = tm.time() - time_inicio
