@@ -3,6 +3,7 @@ import numpy as np
 import open3d as o3d
 import pandas as pd
 import matplotlib.pyplot as plt
+
 import time as tm
 from params import ParamServer
 
@@ -162,9 +163,24 @@ class dpsAnalysis:
             dsp_value_tmp = None
             time = tm.time() - time_inicio
             self.save_data_P_time(radius, time)
-        print(self.parSer.a)
-        print(np.shape(self.parSer.a))
-
+        
+        plt.hist(self.parSer.a, bins=255)
+        plt.show()
+        dsp_value_tmp[0].sort()
+        dsp_value_tmp[1].sort()
+        dsp_value_tmp[2].sort()
+        cl_tree=norm.pdf(dls1,tree_mean,tree_std)
+        cl_ground=norm.pdf(dls2,ground_mean,ground_std)
+        cl_marcador=norm.pdf(dls3,marcador_mean,marcador_std)
+        plt.plot(dsp_value_tmp[0], cl_tree,'b')
+        plt.plot(dsp_value_tmp[1], cl_ground,'r')
+        plt.plot(dsp_value_tmp[2], cl_marcador,'g')
+        plt.title('Distribución normal longitud sefalo')
+        plt.ylabel('Probabilidad')
+        plt.xlabel('Valores')
+        plt.show()
+        
+                                                                                                                           
     def graph_P_dps_type(self, dps_type, P12, P13, P32, radius):
         pwd_imagen = ""
         pwd_imagen += self.parSer.prefix
