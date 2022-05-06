@@ -173,9 +173,7 @@ class dpsAnalysis:
                 plt.plot(b1, Clase1dls,'b', label="Arbol")
                 plt.plot(b2, Clase2dls,'r', label="Tierra")
                 plt.plot(b3, Clase3dls,'g', label="Marcador")
-                plt.title('Distribución normal longitud sefalo')
-                plt.ylabel('Probabilidad')
-                plt.xlabel('Valores')
+                plt.title('Distribución normal Planaridad')
                 plt.show()
                 
             e = None
