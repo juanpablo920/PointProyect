@@ -148,7 +148,7 @@ class dpsAnalysis:
                 ground_std = np.std(dsp_value_tmp[1])
                 marcador_mean = np.mean(dsp_value_tmp[2])
                 marcador_std = np.std(dsp_value_tmp[2])
-
+                print(len(dsp_value_tmp[0]))
                 #Arbol - suelo
                 P12 = (
                     np.abs(tree_mean - ground_mean)) / (3*(tree_std + ground_std))
@@ -159,8 +159,7 @@ class dpsAnalysis:
                 P32 = (
                     np.abs(marcador_mean - ground_mean)) / (3*(marcador_std + ground_std))
                 self.save_data_P_dps_type(dsp_type, radius, P12, P13, P32)
-                print(tree_mean)
-                print(tree_std)
+        
                 SL_d0 = norm(loc = tree_mean, scale = tree_std)
                 SL_d1 = norm(loc = ground_mean, scale = ground_std)
                 SL_d2 = norm(loc = marcador_mean, scale = marcador_std)
