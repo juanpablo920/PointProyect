@@ -166,9 +166,9 @@ class dpsAnalysis:
         
         plt.hist(self.parSer.a, bins=255)
         plt.show()
-        SL_d0 = norm.pdf(loc = tree_mean, scale = tree_std)
-        SL_d1 = norm.pdf(loc = ground_mean, scale = ground_std)
-        SL_d2 = norm.pdf(loc = marcador_mean, scale = marcador_std)
+        SL_d0 = norm(loc = tree_mean, scale = tree_std)
+        SL_d1 = norm(loc = ground_mean, scale = ground_std)
+        SL_d2 = norm(loc = marcador_mean, scale = marcador_std)
         x1 = np.arange(0.5, 1.25, 0.1)
         #plot the pdfs of these normal distributions
         plt.figure()
