@@ -3,7 +3,7 @@ import numpy as np
 import open3d as o3d
 import pandas as pd
 import matplotlib.pyplot as plt
-
+from scipy.stats import norm
 import time as tm
 from params import ParamServer
 
@@ -166,15 +166,18 @@ class dpsAnalysis:
         
         plt.hist(self.parSer.a, bins=255)
         plt.show()
-        cl_tree=norm.pdf(dls1,tree_mean,tree_std)
-        cl_ground=norm.pdf(dls2,ground_mean,ground_std)
-        cl_marcador=norm.pdf(dls3,marcador_mean,marcador_std)
-        plt.plot(dsp_value_tmp[0], cl_tree,'b')
-        plt.plot(dsp_value_tmp[1], cl_ground,'r')
-        plt.plot(dsp_value_tmp[2], cl_marcador,'g')
-        plt.title('Distribución normal longitud sefalo')
-        plt.ylabel('Probabilidad')
-        plt.xlabel('Valores')
+        SL_d0 = norm.pdf(loc = tree_mean, scale = tree_std)
+        SL_d1 = norm.pdf(loc = ground_mean, scale = ground_std)
+        SL_d2 = norm.pdf(loc = marcador_mean, scale = marcador_std)
+        x1 = np.arange(0.5, 1.25, 0.1)
+        #plot the pdfs of these normal distributions
+        plt.figure()
+        plt.clf() 
+        plt.plot(x1, SL_d0, 'g', label="Arbol" )
+        plt.plot(x1, SL_d1, 'b', label="Tierra" )
+        plt.plot(x1, SL_d2, 'r', label="Marcador" )
+        plt.title("Distribucion normal: Planaridad")
+        plt.legend()
         plt.show()
         
                                                                                                                            
