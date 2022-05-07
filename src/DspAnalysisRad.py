@@ -7,52 +7,51 @@ from scipy.stats import norm
 import time as tm
 from params import ParamServer
 
+
 class dpsAnalysis:
 
-    def __init__(self):  #Se inicializa los def con los parametros del archivo params.py
+    def __init__(self):
         self.parSer = ParamServer()
-     
-    def read_data(self):  #Se leen los datos
-        print("read_data") 
-        #Se le pasa la ruta en la que esta la carpeta contenedora del database.txt
+
+    def read_data(self):
+        print("read_data")
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/data/training/"
         file += self.parSer.data_file
-        #En la variable data se le pasa todos los datos del archivo que
+
         data = pd.read_csv(file, sep=" ", header=0)
-        self.X = np.array(data.X)
-        self.Y = np.array(data.Y)
-        self.Z = np.array(data.Z)
+        # self.X = np.array(data.X)
+        # self.Y = np.array(data.Y)
+        # self.Z = np.array(data.Z)
         self.Classification = np.array(data.Classification)
         data = data.drop(['Classification'], axis=1)
 
         self.pcd_xyz = o3d.geometry.PointCloud()
         self.pcd_xyz.points = o3d.utility.Vector3dVector(data.to_numpy())
 
-        pos_Tree = self.Classification == 16  # Tree
-        pos_ground = self.Classification == 2  # ground
-        pos_Model_keypoints = self.Classification == 8  # Model_keypoints
-
-        colors = np.zeros((data.shape[0], 3))
-        colors[pos_Tree, :] = [0.136, 0.556, 0.136]
-        colors[pos_ground, :] = [0.512, 0.256, 0]
-        colors[pos_Model_keypoints, :] = [0.624, 0.624, 0.624]
-
-        self.pcd_xyz.colors = o3d.utility.Vector3dVector(colors)
         print("datos:", len(self.pcd_xyz.points))
 
     def init_files_P(self):
         print("setting_files_P")
         file_base = ""
         file_base += self.parSer.prefix
-        file_base += "pointProyect/dpsAnalysis/radius/data/P_"
+        file_base += "pointProyect/dpsAnalysis/radius/data/"
+        file_P123 = file_base+"P123/P_"
+        file_dsp_type = file_base+"dsp_type/"
+
         for dsp_type in self.parSer.dsp_types:
-            file_tmp = file_base + dsp_type + ".txt"
-            with open(file_tmp, 'w') as f:
+
+            file_P123_tmp = file_P123 + dsp_type + ".txt"
+            file_dsp_type_tmp = file_dsp_type + dsp_type + ".txt"
+
+            with open(file_P123_tmp, 'w') as f:
                 f.write("radius P12 P13 P32\n")
 
-        file_time = file_base + "time.txt"
+            with open(file_dsp_type_tmp, 'w') as f:
+                f.write(dsp_type + "\n")
+
+        file_time = file_P123 + "time.txt"
         with open(file_time, 'w') as f:
             f.write("radius time\n")
 
@@ -74,14 +73,13 @@ class dpsAnalysis:
         e3 = L3/(Sum_L123)
         return e1, e2, e3
 
-    def calculo_dsp(self, dsp_type, e1, e2, e3):
+    def calculo_dsp_type(self, dsp_type, e1, e2, e3):
         dsp_value = 0
         if(e1 > 0 and e2 > 0 and e3 > 0):
             if dsp_type == "L":
                 dsp_value = (e1-e2)/(e1)
             elif dsp_type == "P":
                 dsp_value = (e2-e3)/(e1)
-                self.parSer.a.append(dsp_value)
             elif dsp_type == "S":
                 dsp_value = e3/e1
             elif dsp_type == "O":
@@ -97,19 +95,27 @@ class dpsAnalysis:
                 dsp_value = e3/(e1+e2+e3)
         return dsp_value
 
-    def save_data_P_dps_type(self, dsp_type, radius, P12, P13, P32):
+    def save_data_dps_type(self, dsp_type, dsp_value):
         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/dpsAnalysis/radius/data/P_"
+        file += "pointProyect/dpsAnalysis/radius/data/dsp_type/"
+        file += dsp_type + ".txt"
+        with open(file, 'a') as f:
+            f.write(str(dsp_value)+"\n")
+
+    def save_data_P123_dps_type(self, dsp_type, radius, P12, P13, P32):
+        file = ""
+        file += self.parSer.prefix
+        file += "pointProyect/dpsAnalysis/radius/data/P123/P_"
         file += dsp_type + ".txt"
         with open(file, 'a') as f:
             f.write(
                 str(radius)+" " + str(P12)+" " + str(P13)+" "+str(P32)+"\n")
 
-    def save_data_P_time(self, radius, time):
+    def save_data_P123_time(self, radius, time):
         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/dpsAnalysis/radius/data/P_time.txt"
+        file += "pointProyect/dpsAnalysis/radius/data/P123/P_time.txt"
         with open(file, 'a') as f:
             f.write(str(radius)+" " + str(time)+"\n")
 
@@ -131,11 +137,13 @@ class dpsAnalysis:
 
             print("-> dsp_types -> save data P")
             for dsp_type in self.parSer.dsp_types:
-                print(dsp_type)
+
                 dsp_value_tmp = [[], [], []]
                 for idx, e_tmp in enumerate(e):
                     e1, e2, e3 = e_tmp
-                    dsp_value = self.calculo_dsp(dsp_type, e1, e2, e3)
+                    dsp_value = self.calculo_dsp_type(dsp_type, e1, e2, e3)
+                    self.save_data_dps_type(dsp_type, dsp_value)
+
                     if(e1 < 0 or e2 < 0 or e3 < 0):
                         continue
 
@@ -162,33 +170,33 @@ class dpsAnalysis:
                 #Marcador - Suelo
                 P32 = (
                     np.abs(marcador_mean - ground_mean)) / (3*(marcador_std + ground_std))
-                self.save_data_P_dps_type(dsp_type, radius, P12, P13, P32)
-        
-                b1=dsp_value_tmp[0] #arbol
-                b2=dsp_value_tmp[1] 
-                b3=dsp_value_tmp[2]
-                b1.sort()
-                b2.sort()
-                b3.sort()
+                self.save_data_P123_dps_type(dsp_type, radius, P12, P13, P32)
 
-                Clase1dls=norm.pdf(b1,tree_mean,tree_std)
-                Clase2dls=norm.pdf(b2,ground_mean,ground_std)
-                Clase3dls=norm.pdf(b3,marcador_mean,marcador_std)
-                plt.plot(b1, Clase1dls,'b', label="Arbol")
-                plt.plot(b2, Clase2dls,'r', label="Tierra")
-                plt.plot(b3, Clase3dls,'g', label="Marcador")
-                plt.title('Distribución normal Planaridad')
-                plt.legend()
-                plt.show()
-                
+                # b1 = dsp_value_tmp[0]  # arbol
+                # b2 = dsp_value_tmp[1]
+                # b3 = dsp_value_tmp[2]
+                # b1.sort()
+                # b2.sort()
+                # b3.sort()
+
+                # Clase1dls = norm.pdf(b1, tree_mean, tree_std)
+                # Clase2dls = norm.pdf(b2, ground_mean, ground_std)
+                # Clase3dls = norm.pdf(b3, marcador_mean, marcador_std)
+                # plt.plot(b1, Clase1dls, 'b', label="Arbol")
+                # plt.plot(b2, Clase2dls, 'r', label="Tierra")
+                # plt.plot(b3, Clase3dls, 'g', label="Marcador")
+                # plt.title('Distribución normal Planaridad')
+                # plt.legend()
+                # plt.show()
+
             e = None
             dsp_value_tmp = None
             time = tm.time() - time_inicio
-            self.save_data_P_time(radius, time)
-        
-        plt.hist(self.parSer.a, bins=255)
-        plt.show()
-                                                                                                                        
+            self.save_data_P123_time(radius, time)
+
+        # plt.hist(self.parSer.a, bins=255)
+        # plt.show()
+
     def graph_P_dps_type(self, dps_type, P12, P13, P32, radius):
         pwd_imagen = ""
         pwd_imagen += self.parSer.prefix
@@ -288,16 +296,23 @@ class dpsAnalysis:
 
     def graphics(self):
         print("graphics")
-        pwd_files = ""
-        pwd_files += self.parSer.prefix
-        pwd_files += "pointProyect/dpsAnalysis/radius/data/"
 
-        name_files = os.listdir(pwd_files)
-        name_files.remove("data.txt")
-        name_files.remove("P_time.txt")
+        pwd_files_base = ""
+        pwd_files_base += self.parSer.prefix
+        pwd_files_base += "pointProyect/dpsAnalysis/radius/data/"
+        
+        pwd_files_P123 = pwd_files_base+"P123/P_"
+        pwd_files_dsp_type = pwd_files_base+"dsp_type/"
+
+        name_files_P123 = os.listdir(pwd_files_P123)
+        name_files_P123.remove("data.txt")
+        name_files_P123.remove("P_time.txt")
+
+        name_files_dsp_type = os.listdir(pwd_files_dsp_type)
+        name_files_dsp_type.remove("data.txt")
 
         list_averages_P = []
-        for name_file in name_files:
+        for name_file_P123 in name_files_P123:
             data = pd.read_csv(pwd_files+name_file, sep=" ", header=0)
             print("-"*10)
             print("name_file: ", name_file)
