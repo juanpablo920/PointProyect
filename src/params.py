@@ -7,7 +7,6 @@ class ParamServer:
         self.prefix = "/home/juanpablo/"
 
         # example
-        # PCD_NIR_training_4M_low10
         self.data_file = "PCD_NIR_training_4M_low50.txt"
         self.a = []
         # self.dsp_types = ["L", "P", "S", "O", "A", "E", "C"]  # Sum

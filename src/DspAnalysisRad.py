@@ -7,20 +7,23 @@ from scipy.stats import norm
 import time as tm
 from params import ParamServer
 
-
 class dpsAnalysis:
 
-    def __init__(self):
+    def __init__(self):  #Se inicializa los def con los parametros del archivo params.py
         self.parSer = ParamServer()
-
-    def read_data(self):
-        print("read_data")
+     
+    def read_data(self):  #Se leen los datos
+        print("read_data") 
+        #Se le pasa la ruta en la que esta la carpeta contenedora del database.txt
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/data/training/"
         file += self.parSer.data_file
-
+        #En la variable data se le pasa todos los datos del archivo que
         data = pd.read_csv(file, sep=" ", header=0)
+        self.X = np.array(data.X)
+        self.Y = np.array(data.Y)
+        self.Z = np.array(data.Z)
         self.Classification = np.array(data.Classification)
         data = data.drop(['Classification'], axis=1)
 
@@ -128,6 +131,7 @@ class dpsAnalysis:
 
             print("-> dsp_types -> save data P")
             for dsp_type in self.parSer.dsp_types:
+                print(dsp_type)
                 dsp_value_tmp = [[], [], []]
                 for idx, e_tmp in enumerate(e):
                     e1, e2, e3 = e_tmp
@@ -160,8 +164,8 @@ class dpsAnalysis:
                     np.abs(marcador_mean - ground_mean)) / (3*(marcador_std + ground_std))
                 self.save_data_P_dps_type(dsp_type, radius, P12, P13, P32)
         
-                b1=dsp_value_tmp[0]
-                b2=dsp_value_tmp[1]
+                b1=dsp_value_tmp[0] #arbol
+                b2=dsp_value_tmp[1] 
                 b3=dsp_value_tmp[2]
                 b1.sort()
                 b2.sort()
@@ -174,6 +178,7 @@ class dpsAnalysis:
                 plt.plot(b2, Clase2dls,'r', label="Tierra")
                 plt.plot(b3, Clase3dls,'g', label="Marcador")
                 plt.title('Distribución normal Planaridad')
+                plt.legend()
                 plt.show()
                 
             e = None
