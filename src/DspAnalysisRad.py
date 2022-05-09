@@ -275,7 +275,7 @@ class dpsAnalysis:
         plt.plot(
             radius[posMax_average], average_P[posMax_average],
             'vC0', label="average(max): {0:.2f} \n radius: {1:.2f}".format(max_average, radius[posMax_average][0]))
-        plt.title("average_P_vs_radius")
+        plt.title("average_"+dps_type+"_vs_radius")
         plt.xlabel('radius')
         plt.ylabel('average_P')
         plt.grid(True)
@@ -316,10 +316,10 @@ class dpsAnalysis:
         name_files.remove("P_time.txt")
 
         list_averages_P = []
+        print("")
         for name_file in name_files:
             data = pd.read_csv(pwd_files+name_file, sep=" ", header=0)
-            print("-"*10)
-            print("name_file: ", name_file)
+            print("--> ", name_file)
 
             radius = np.array(data.radius)
 
@@ -338,9 +338,7 @@ class dpsAnalysis:
             list_averages_P.append(average_P_tmp)
 
         times = pd.read_csv(pwd_files+"P_time.txt", sep=" ", header=0)
-        print("-"*10)
-        print("name_file: ", "P_time.txt")
-        print(times)
+        print("-->  P_time.txt")
 
         radius = np.array(times.radius)
         time = np.array(times.time)
@@ -349,57 +347,75 @@ class dpsAnalysis:
         averages_P = np.sum(list_averages_P, axis=0)/len(list_averages_P)
         self.graph_selection_Radius(averages_P, radius)
 
-    def graph_gaussiana_dps_type(self, dps_type, dsp_tree, dsp_ground, dsp_Model_keypoints):
+    def graph_gaussiana_dps_type(self, dps_type, dsp_tree, dsp_ground, dsp_marcador):
         pwd_imagen = ""
         pwd_imagen += self.parSer.prefix
         pwd_imagen += "pointProyect/dpsAnalysis/radius/images/gaussiana_dps/"
 
-        # b1 = dsp_value_tmp[0]
-        # b2 = dsp_value_tmp[1]
-        # b3 = dsp_value_tmp[2]
-        # b1.sort()
-        # b2.sort()
-        # b3.sort()
+        tree_mean = np.mean(dsp_tree)
+        tree_std = np.std(dsp_tree)
 
-        # Clase1dls = norm.pdf(b1, tree_mean, tree_std)
-        # Clase2dls = norm.pdf(b2, ground_mean, ground_std)
-        # Clase3dls = norm.pdf(b3, marcador_mean, marcador_std)
-        # plt.plot(b1, Clase1dls, 'b', label="Arbol")
-        # plt.plot(b2, Clase2dls, 'r', label="Tierra")
-        # plt.plot(b3, Clase3dls, 'g', label="Marcador")
-        # plt.title('Distribucion normal Planaridad')
-        # plt.legend()
-        # plt.show()
+        ground_mean = np.mean(dsp_ground)
+        ground_std = np.std(dsp_ground)
 
-        # plt.hist(self.parSer.a, bins=255)
-        # plt.show()
+        marcador_mean = np.mean(dsp_marcador)
+        marcador_std = np.std(dsp_marcador)
+
+        Clase1dls = norm.pdf(dsp_tree, tree_mean, tree_std)
+        Clase2dls = norm.pdf(dsp_ground, ground_mean, ground_std)
+        Clase3dls = norm.pdf(dsp_marcador, marcador_mean, marcador_std)
+
+        plt.figure()
+        plt.rcParams['agg.path.chunksize'] = 10000
+        plt.plot(dsp_tree, Clase1dls, 'b', label="Arbol")
+        plt.plot(dsp_ground, Clase2dls, 'r', label="Tierra")
+        plt.plot(dsp_marcador, Clase3dls, 'g', label="Marcador")
+        plt.title("Distribucion normal " + dps_type)
+        plt.legend()
+        plt.savefig(pwd_imagen + "gaussiana_" + dps_type + ".png")
+        plt.clf()
+
+    def graph_histograms_dps(self, dps_type, dsp_values):
+        pwd_imagen = ""
+        pwd_imagen += self.parSer.prefix
+        pwd_imagen += "pointProyect/dpsAnalysis/radius/images/histograms_dps/"
+
+        plt.figure()
+        plt.hist(dsp_values, bins=255, label=dps_type)
+        plt.title("Histograma " + dps_type)
+        plt.legend()
+        plt.savefig(pwd_imagen + "histograms_" + dps_type + ".png")
+        plt.clf()
 
     def generate_graphics_dsp(self):
         pwd_files = ""
         pwd_files += self.parSer.prefix
-        pwd_files += "pointProyect/dpsAnalysis/radius/data/dsp"
+        pwd_files += "pointProyect/dpsAnalysis/radius/data/dsp/"
 
         name_files = os.listdir(pwd_files)
         name_files.remove("data.txt")
         name_files.remove("radius.txt")
 
+        pos_Tree = self.Classification == 16  # Tree
+        pos_ground = self.Classification == 2  # ground
+        pos_Model_keypoints = self.Classification == 8  # Model_keypoints
+
+        print("")
         for name_file in name_files:
             data = pd.read_csv(pwd_files+name_file, sep=" ", header=0)
-            print("-"*10)
-            print("name_file: ", name_file)
+            print("--> ", name_file)
 
             dsp_values = np.array(data.value)
 
-            pos_Tree = self.Classification == 16  # Tree
-            pos_ground = self.Classification == 2  # ground
-            pos_Model_keypoints = self.Classification == 8  # Model_keypoints
-
-            dsp_tree = dsp_values[pos_Tree]
-            dsp_ground = dsp_values[pos_ground]
-            dsp_Model_keypoints = dsp_values[pos_Model_keypoints]
+            dsp_tree = np.sort(dsp_values[pos_Tree])
+            dsp_ground = np.sort(dsp_values[pos_ground])
+            dsp_marcador = np.sort(dsp_values[pos_Model_keypoints])
 
             dps_type = name_file[:len(name_file)-4]
-            self.graph_gaussiana_dps_type(dps_type,dsp_tree,dsp_ground,dsp_Model_keypoints)
+            self.graph_gaussiana_dps_type(
+                dps_type, dsp_tree, dsp_ground, dsp_marcador)
+
+            self.graph_histograms_dps(dps_type, dsp_values)
 
 
 if __name__ == '__main__':
@@ -449,9 +465,9 @@ if __name__ == '__main__':
         print("")
         dps_analysis.setting_files_dsp()
         dps_analysis.read_data()
-        print("")
+        print("-"*10)
         radius_dsp = float(input("radius: "))
-        print("")
+        print("-"*10)
         dps_analysis.generate_files_dsp(radius_dsp)
     elif opcion == "4":
         print("="*10)
