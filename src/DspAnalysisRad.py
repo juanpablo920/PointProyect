@@ -185,7 +185,7 @@ class dpsAnalysis:
                 # plt.plot(b1, Clase1dls, 'b', label="Arbol")
                 # plt.plot(b2, Clase2dls, 'r', label="Tierra")
                 # plt.plot(b3, Clase3dls, 'g', label="Marcador")
-                # plt.title('Distribución normal Planaridad')
+                # plt.title('Distribucion normal Planaridad')
                 # plt.legend()
                 # plt.show()
 
@@ -382,4 +382,4 @@ if __name__ == '__main__':
         dps_analysis.graphics()
     else:
         print("="*10)
-        print("no es una opción '{opcion}'")
+        print("no es una opcion '{opcion}'")
