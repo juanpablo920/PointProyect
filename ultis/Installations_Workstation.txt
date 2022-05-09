@@ -12,6 +12,7 @@
 -instalaciones
 	- caja---- Para ver graficamente la terminal
 			pip install caja
+	pip install scipy
 	sudo pip3 install sklearn
 	sudo apt-get install python3-pip
 	sudo pip3 install progressbar2
