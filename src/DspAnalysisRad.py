@@ -56,7 +56,7 @@ class dpsAnalysis:
         for dsp_type in self.parSer.dsp_types:
             file_dsp = file_base + dsp_type + ".txt"
             with open(file_dsp, 'w') as f:
-                f.write("value\n")
+                f.write("X Y Z value\n")
 
         file_time = file_base + "radius.txt"
         with open(file_time, 'w') as f:
@@ -117,13 +117,16 @@ class dpsAnalysis:
         with open(file, 'a') as f:
             f.write(str(radius)+" "+str(time)+"\n")
 
-    def save_data_dps_type(self, dsp_type, dsp_value):
+    def save_data_dps_type(self, dsp_type, X, Y, Z, dsp_value):
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/dpsAnalysis/radius/data/dsp/"
         file += dsp_type + ".txt"
         with open(file, 'a') as f:
-            f.write(str(dsp_value)+"\n")
+            f.write(str(X) + " " +
+                    str(Y) + " " +
+                    str(Z) + " " +
+                    str(dsp_value)+"\n")
 
     def save_data_dsp_radius(self, radius):
         file = ""
@@ -202,10 +205,11 @@ class dpsAnalysis:
 
         print("-> save_data_dps_type")
         for dsp_type in self.parSer.dsp_types:
-            for e_tmp in e:
+            for idx, e_tmp in enumerate(e):
                 e1, e2, e3 = e_tmp
+                X, Y, Z = self.pcd_xyz.points[idx]
                 dsp_value = self.calculo_dsp_type(dsp_type, e1, e2, e3)
-                self.save_data_dps_type(dsp_type, dsp_value)
+                self.save_data_dps_type(dsp_type, X, Y, Z, dsp_value)
 
         self.save_data_dsp_radius(radius)
 
