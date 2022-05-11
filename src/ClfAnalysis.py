@@ -33,27 +33,40 @@ class clfAnalysis:
     def __init__(self):
         self.parSer = ParamServer()
 
-    def read_data(self):
-        print("read_data")
+    def read_data_train(self):
+        print("read_data_train")
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/data/training/"
-        file += self.parSer.data_file
+        file += self.parSer.data_file_train
 
         data = pd.read_csv(file, sep=" ", header=0)
-        # self.X = np.array(data.X)
-        # self.Y = np.array(data.Y)
-        # self.Z = np.array(data.Z)
-        self.Classification = np.array(data.Classification)
+        self.Classification_train = np.array(data.Classification)
         data = data.drop(['Classification'], axis=1)
 
-        self.pcd_xyz = o3d.geometry.PointCloud()
-        self.pcd_xyz.points = o3d.utility.Vector3dVector(data.to_numpy())
+        self.pcd_train = o3d.geometry.PointCloud()
+        self.pcd_train.points = o3d.utility.Vector3dVector(data.to_numpy())
 
-        print("datos:", len(self.pcd_xyz.points))
+        print("datos:", len(self.pcd_train.points))
+
+    def read_data_valid(self):
+        print("read_data_valid")
+        file = ""
+        file += self.parSer.prefix
+        file += "pointProyect/data/validation/"
+        file += self.parSer.data_file_valid
+
+        data = pd.read_csv(file, sep=" ", header=0)
+        self.Classification_valid = np.array(data.Classification)
+        data = data.drop(['Classification'], axis=1)
+
+        self.pcd_valid = o3d.geometry.PointCloud()
+        self.pcd_valid.points = o3d.utility.Vector3dVector(data.to_numpy())
+
+        print("datos:", len(self.pcd_valid.points))
 
     def read_data_dsp(self):
-        print("read_data")
+        print("read_data_dsp")
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/clfAnalysis/data/dsp.txt"
@@ -67,22 +80,28 @@ class clfAnalysis:
         data = data.drop(['Classification'], axis=1)
 
         self.dsp = data.to_numpy()
-        
+
         print("datos_classification:", len(self.Classification))
         print("datos_dsp:", self.dsp.shape)
 
     def setting_files_dsp(self):
         print("setting_files_dsp")
-        file = ""
-        file += self.parSer.prefix
-        file += "pointProyect/clfAnalysis/data/dsp.txt"
+        file_base = ""
+        file_base += self.parSer.prefix
+        file_base += "pointProyect/clfAnalysis/data/"
+
+        file_train = file_base + "dsp_train.txt"
+        file_valid = file_base + "dsp_valid.txt"
 
         encabezado = ""
         encabezado += "X Y Z Classification"
         for dsp_type in self.parSer.dsp_types:
             encabezado += " " + dsp_type
 
-        with open(file, 'w') as f:
+        with open(file_train, 'w') as f:
+            f.write(encabezado+"\n")
+
+        with open(file_valid, 'w') as f:
             f.write(encabezado+"\n")
 
     def calculo_valores_propios(self, matricesCov):
@@ -124,10 +143,11 @@ class clfAnalysis:
             dsp_value = e1 + e2 + e3
         return dsp_value
 
-    def save_data_dps(self, X, Y, Z, Classification, dsp_values):
+    def save_data_dps(self, dsp_type, X, Y, Z, Classification, dsp_values):
         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/clfAnalysis/data/dsp.txt"
+        file += "pointProyect/clfAnalysis/data/"
+        file += dsp_type + ".txt"
 
         linea = ""
         linea += str(X)
@@ -141,18 +161,18 @@ class clfAnalysis:
         with open(file, 'a') as f:
             f.write(linea+"\n")
 
-    def generate_files_dsp(self, radius):
-        print("generate_files_dsp")
+    def generate_files_dsp_train(self, radius):
+        print("generate_files_dsp_train")
         print(">"*10)
         print("-> radius: ", radius)
         print("-> calculo de matrices de covarianza")
-        self.pcd_xyz.estimate_covariances(
+        self.pcd_train.estimate_covariances(
             search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
 
         print("-> calculo valores propios e")
-        for idx, matricesCov_tmp in enumerate(self.pcd_xyz.covariances):
-            X, Y, Z = self.pcd_xyz.points[idx]
-            Classification_tmp = self.Classification[idx]
+        for idx, matricesCov_tmp in enumerate(self.pcd_train.covariances):
+            X, Y, Z = self.pcd_train.points[idx]
+            Classification_tmp = self.Classification_train[idx]
 
             e1, e2, e3 = self.calculo_valores_propios(matricesCov_tmp)
 
@@ -161,7 +181,31 @@ class clfAnalysis:
                 dsp_value = self.calculo_dsp_type(dsp_type, e1, e2, e3)
                 dsp_values_tmp.append(dsp_value)
 
-            self.save_data_dps(X, Y, Z, Classification_tmp, dsp_values_tmp)
+            self.save_data_dps("dsp_train", X, Y, Z,
+                               Classification_tmp, dsp_values_tmp)
+
+    def generate_files_dsp_valid(self, radius):
+        print("generate_files_dsp_valid")
+        print(">"*10)
+        print("-> radius: ", radius)
+        print("-> calculo de matrices de covarianza")
+        self.pcd_valid.estimate_covariances(
+            search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
+
+        print("-> calculo valores propios e")
+        for idx, matricesCov_tmp in enumerate(self.pcd_valid.covariances):
+            X, Y, Z = self.pcd_valid.points[idx]
+            Classification_tmp = self.Classification_valid[idx]
+
+            e1, e2, e3 = self.calculo_valores_propios(matricesCov_tmp)
+
+            dsp_values_tmp = []
+            for dsp_type in self.parSer.dsp_types:
+                dsp_value = self.calculo_dsp_type(dsp_type, e1, e2, e3)
+                dsp_values_tmp.append(dsp_value)
+
+            self.save_data_dps("dsp_valid", X, Y, Z,
+                               Classification_tmp, dsp_values_tmp)
 
     def RandomForestClassifier(self):
 
@@ -442,11 +486,13 @@ if __name__ == '__main__':
             exit()
         print("")
         clf_analysis.setting_files_dsp()
-        clf_analysis.read_data()
+        clf_analysis.read_data_train()
+        clf_analysis.read_data_valid()
         print("-"*10)
         radius_dsp = float(input("radius: "))
         print("-"*10)
-        clf_analysis.generate_files_dsp(radius_dsp)
+        clf_analysis.generate_files_dsp_train(radius_dsp)
+        clf_analysis.generate_files_dsp_valid(radius_dsp)
     elif opcion == "2":
         clf_analysis.read_data_dsp()
         clf_analysis.RandomForestClassifier()
