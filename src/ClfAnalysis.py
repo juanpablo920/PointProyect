@@ -1,7 +1,11 @@
-import pandas as pd
+import os
 import numpy as np
+import open3d as o3d
+import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+import time as tm
+from params import ParamServer
 import statistics
 from sklearn.preprocessing import StandardScaler
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
@@ -15,7 +19,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
-from sklearn.metrics import confusion_matrix
 from sklearn.neighbors import NearestCentroid
 from sklearn.linear_model import PassiveAggressiveClassifier
 from sklearn import svm
@@ -55,12 +58,10 @@ class clfAnalysis:
     def save_data_dps(self, Classification, dsp_values):
         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/dpsAnalysis/radius/data/dsp/"
+        file += "pointProyect/clfAnalysis/data/"
         file += dsp_type + ".txt"
         with open(file, 'a') as f:
-            f.write(str(X) + " " +
-                    str(Y) + " " +
-                    str(Z) + " " +
+            f.write(str(Classification) + " " +
                     str(dsp_value)+"\n")
 
     def generate_files_dsp(self, radius):
