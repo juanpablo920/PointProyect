@@ -9,7 +9,6 @@ from sklearn.metrics import f1_score
 import matplotlib.pyplot as plt
 
 
-
 neigh = KNeighborsClassifier(n_neighbors=16)
 neigh.fit(train, tr)
 pre=neigh.predict(adjust)
