@@ -511,7 +511,8 @@ if __name__ == '__main__':
         clf_analysis.generate_files_dsp_train(radius_dsp)
         clf_analysis.generate_files_dsp_valid(radius_dsp)
     elif opcion == "2":
-        clf_analysis.read_data_dsp()
+        clf_analysis.read_data_dsp_train()
+        clf_analysis.read_data_dsp_valid()
         clf_analysis.Gaussiano()
     elif opcion == "3":
         pass
