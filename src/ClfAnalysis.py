@@ -100,7 +100,6 @@ class clfAnalysis:
         self.dsp_valid = data.to_numpy()
 
         print("datos_Classification_valid:", len(self.Classification_valid))
-        print("dsp_valid:", self.dsp.shape)
 
     def setting_files_dsp(self):
         print("setting_files_dsp")
