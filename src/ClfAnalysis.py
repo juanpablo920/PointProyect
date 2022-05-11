@@ -82,7 +82,6 @@ class clfAnalysis:
         self.dsp_train = data.to_numpy()
 
         print("datos_Classification_train:", len(self.Classification_train))
-        print("dsp_train:", self.dsp.shape)
 
     def read_data_dsp_valid(self):
         print("read_data_dsp_valid")
