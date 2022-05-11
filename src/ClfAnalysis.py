@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm
 import time as tm
 from params import ParamServer
-import statistics
+
 from sklearn.preprocessing import StandardScaler
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn.decomposition import PCA
@@ -17,15 +17,14 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import f1_score
 from sklearn.neighbors import NearestCentroid
 from sklearn.linear_model import PassiveAggressiveClassifier
 from sklearn import svm
 from sklearn.mixture import GaussianMixture
-from sklearn.cluster import KMeans
-from lowResolutionPcd import Classification_tmp
-from params import ParamServer
+from sklearn.cluster import KMean
+
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
 
 
 class clfAnalysis:
@@ -33,7 +32,7 @@ class clfAnalysis:
     def __init__(self):
         self.parSer = ParamServer()
 
-    def read_data_file(self):
+    def read_data(self):
         print("read_data")
         file = ""
         file += self.parSer.prefix
@@ -41,9 +40,16 @@ class clfAnalysis:
         file += self.parSer.data_file
 
         data = pd.read_csv(file, sep=" ", header=0)
+        # self.X = np.array(data.X)
+        # self.Y = np.array(data.Y)
+        # self.Z = np.array(data.Z)
         self.Classification = np.array(data.Classification)
+        data = data.drop(['Classification'], axis=1)
 
-        print("datos:", len(self.Classification))
+        self.pcd_xyz = o3d.geometry.PointCloud()
+        self.pcd_xyz.points = o3d.utility.Vector3dVector(data.to_numpy())
+
+        print("datos:", len(self.pcd_xyz.points))
 
     def read_data_dsp(self):
         print("read_data")
@@ -52,17 +58,86 @@ class clfAnalysis:
         file += "pointProyect/clfAnalysis/data/dsp.txt"
 
         data = pd.read_csv(file, sep=" ", header=0)
+        data = data.drop(['X'], axis=1)
+        data = data.drop(['Y'], axis=1)
+        data = data.drop(['Z'], axis=1)
+
+        self.Classification = np.array(data.Classification)
+        data = data.drop(['Classification'], axis=1)
+
+        self.dsp = data.to_numpy()
 
         print("datos:", len(self.Classification))
 
-    def save_data_dps(self, Classification, dsp_values):
+    def setting_files_dsp(self):
+        print("setting_files_dsp")
         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/clfAnalysis/data/"
-        file += dsp_type + ".txt"
+        file += "pointProyect/clfAnalysis/data/dsp.txt"
+
+        encabezado = ""
+        encabezado += "X Y Z Classification"
+        for dsp_type in self.parSer.dsp_types:
+            encabezado += " " + dsp_type
+
+        with open(file, 'w') as f:
+            f.write(encabezado+"\n")
+
+    def calculo_valores_propios(self, matricesCov):
+        val_propio_cov = np.linalg.eigvals(matricesCov)
+        val_propio = np.sort(val_propio_cov)
+        L1 = val_propio[2]
+        L2 = val_propio[1]
+        L3 = val_propio[0]
+        if(L3 <= 0):
+            L3 = 1e-8
+        if(L2 <= 0):
+            L2 = 1e-8
+        if(L1 <= 0):
+            L1 = 1e-8
+        Sum_L123 = (L1+L2+L3)
+        e1 = L1/(Sum_L123)
+        e2 = L2/(Sum_L123)
+        e3 = L3/(Sum_L123)
+        return e1, e2, e3
+
+    def calculo_dsp_type(self, dsp_type, e1, e2, e3):
+        dsp_value = 0
+        if dsp_type == "L":
+            dsp_value = (e1-e2)/(e1)
+        elif dsp_type == "P":
+            dsp_value = (e2-e3)/(e1)
+        elif dsp_type == "S":
+            dsp_value = e3/e1
+        elif dsp_type == "O":
+            dsp_value = np.cbrt(e1*e2*e3)
+        elif dsp_type == "A":
+            dsp_value = (e1-e3)/(e1)
+        elif dsp_type == "E":
+            dsp_value = - (e1*np.log(e1) + e2*np.log(e2) +
+                           e3*np.log(e3))
+        elif dsp_type == "C":
+            dsp_value = e3/(e1+e2+e3)
+        elif dsp_type == "Sum":
+            dsp_value = e1 + e2 + e3
+        return dsp_value
+
+    def save_data_dps(self, X, Y, Z, Classification, dsp_values):
+        file = ""
+        file += self.parSer.prefix
+        file += "pointProyect/clfAnalysis/data/dsp.txt"
+
+        linea = ""
+        linea += str(X)
+        linea += " " + str(Y)
+        linea += " " + str(Z)
+        linea += " " + str(Classification)
+
+        for dsp_value in dsp_values:
+            linea += " " + str(dsp_value)
+
         with open(file, 'a') as f:
-            f.write(str(Classification) + " " +
-                    str(dsp_value)+"\n")
+            f.write(linea+"\n")
 
     def generate_files_dsp(self, radius):
         print("generate_files_dsp")
@@ -73,26 +148,18 @@ class clfAnalysis:
             search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
 
         print("-> calculo valores propios e")
-        e = []
-        for matricesCov_tmp in self.pcd_xyz.covariances:
-            e1, e2, e3 = self.calculo_valores_propios(matricesCov_tmp)
-            e.append([e1, e2, e3])
-
-        print("-> save_data_dps_type")
-
-        for idx, e_tmp in enumerate(e):
-            e1, e2, e3 = e_tmp
+        for idx, matricesCov_tmp in enumerate(self.pcd_xyz.covariances):
+            X, Y, Z = self.pcd_xyz.points[idx]
             Classification_tmp = self.Classification[idx]
+
+            e1, e2, e3 = self.calculo_valores_propios(matricesCov_tmp)
+
             dsp_values_tmp = []
             for dsp_type in self.parSer.dsp_types:
                 dsp_value = self.calculo_dsp_type(dsp_type, e1, e2, e3)
                 dsp_values_tmp.append(dsp_value)
 
-            self.save_data_dps(Classification_tmp, dsp_values_tmp)
-
-
-class clfAnalysis:
-    pass
+            self.save_data_dps(X, Y, Z, Classification_tmp, dsp_values_tmp)
 
     def RandomForestClassifier(self):
 
@@ -199,7 +266,7 @@ class clfAnalysis:
             print(i)
         plt.plot(a)
         plt.show()
-        #16
+        # 16
         """
         neigh = KNeighborsClassifier(n_neighbors=16)
         neigh.fit(train, tr)
@@ -349,3 +416,39 @@ class clfAnalysis:
 
 
 # RMSE
+
+
+if __name__ == '__main__':
+    clf_analysis = clfAnalysis()
+
+    print("Opcion_1: generar archivos dps")
+    print("")
+    print("Opcion_2: generar archivos clf")
+    print("Opcion_3: generar graficas clf")
+    print("")
+
+    opcion = input("opcion: ")
+
+    if opcion == "1":
+        print("="*10)
+        print("generar archivos dsp")
+        print("")
+        print("Opcion_1: init_files_dsp")
+        print("Opcion_x: salir")
+        opcion = input("opcion: ")
+        if opcion != "1":
+            exit()
+        print("")
+        clf_analysis.setting_files_dsp()
+        clf_analysis.read_data()
+        print("-"*10)
+        radius_dsp = float(input("radius: "))
+        print("-"*10)
+        clf_analysis.generate_files_dsp(radius_dsp)
+    elif opcion == "2":
+        pass
+    elif opcion == "3":
+        pass
+    else:
+        print("="*10)
+        print("no es una opcion '{opcion}'")
