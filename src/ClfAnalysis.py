@@ -66,8 +66,10 @@ class clfAnalysis:
         data = data.drop(['Classification'], axis=1)
 
         self.dsp = data.to_numpy()
+        
 
-        print("datos:", len(self.Classification))
+        print("datos_classification:", len(self.Classification))
+        print("datos_dsp:", len(self.dsp))
 
     def setting_files_dsp(self):
         print("setting_files_dsp")
