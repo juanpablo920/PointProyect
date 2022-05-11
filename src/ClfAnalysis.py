@@ -1,4 +1,5 @@
 import os
+from unittest.mock import seal
 import numpy as np
 import open3d as o3d
 import pandas as pd
@@ -447,7 +448,7 @@ if __name__ == '__main__':
         print("-"*10)
         clf_analysis.generate_files_dsp(radius_dsp)
     elif opcion == "2":
-        pass
+        clf_analysis.read_data_dsp()
     elif opcion == "3":
         pass
     else:
