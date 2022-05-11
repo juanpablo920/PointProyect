@@ -461,7 +461,7 @@ if __name__ == '__main__':
         print("="*10)
         print("generar archivos dsp")
         print("")
-        print("Opcion_1: continue")
+        print("Opcion_1: init_files_dsp")
         print("Opcion_x: salir")
         opcion = input("opcion: ")
         if opcion != "1":
