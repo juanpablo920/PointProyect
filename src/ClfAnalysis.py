@@ -277,12 +277,10 @@ class clfAnalysis:
         # Gaussiano
 
         clf = GaussianNB()
-        clf.fit(trainc, trc)
-        pre = clf.predict(testc)
-        print("Accuracy: ", accuracy_score(tec, pre)*100, "%")
-        print("F1: ", f1_score(tec, pre, average=None)*100, "%")
-        a1 = accuracy_score(tec, pre)*100
-        b1 = f1_score(tec, pre, average=None)*100
+        clf.fit(self.dsp_train, self.Classification_train)
+        pre = clf.predict(self.dsp_valid)
+        print("Accuracy: ", accuracy_score(self.Classification_valid, pre)*100, "%")  #tec= etiquetas de validacion y pre lo que predijo
+        print("F1: ", f1_score(self.Classification_valid, pre, average=None)*100, "%")
 
     def Rocchio(self):
 
@@ -514,7 +512,7 @@ if __name__ == '__main__':
         clf_analysis.generate_files_dsp_valid(radius_dsp)
     elif opcion == "2":
         clf_analysis.read_data_dsp()
-        clf_analysis.RandomForestClassifier()
+        clf_analysis.Gaussiano()
     elif opcion == "3":
         pass
     else:
