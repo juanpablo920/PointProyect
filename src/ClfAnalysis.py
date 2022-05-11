@@ -82,6 +82,7 @@ class clfAnalysis:
         self.dsp_train = data.to_numpy()
 
         print("datos_Classification_train:", len(self.Classification_train))
+        print("dsp_valid:", self.dsp_train.shape)
 
     def read_data_dsp_valid(self):
         print("read_data_dsp_valid")
@@ -100,6 +101,7 @@ class clfAnalysis:
         self.dsp_valid = data.to_numpy()
 
         print("datos_Classification_valid:", len(self.Classification_valid))
+        print("dsp_valid:", self.dsp_valid.shape)
 
     def setting_files_dsp(self):
         print("setting_files_dsp")
@@ -277,7 +279,9 @@ class clfAnalysis:
         clf = GaussianNB()
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
-        print("Accuracy: ", accuracy_score(self.Classification_valid, pre)*100, "%")  #tec= etiquetas de validacion y pre lo que predijo
+        # tec= etiquetas de validacion y pre lo que predijo
+        print("Accuracy: ", accuracy_score(
+            self.Classification_valid, pre)*100, "%")
         print("F1: ", f1_score(self.Classification_valid, pre, average=None)*100, "%")
 
     def Rocchio(self):
