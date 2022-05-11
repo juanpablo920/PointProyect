@@ -21,7 +21,7 @@ from sklearn.neighbors import NearestCentroid
 from sklearn.linear_model import PassiveAggressiveClassifier
 from sklearn import svm
 from sklearn.mixture import GaussianMixture
-from sklearn.cluster import KMean
+from sklearn.cluster import KMeans
 
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
