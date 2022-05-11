@@ -65,24 +65,43 @@ class clfAnalysis:
 
         print("datos:", len(self.pcd_valid.points))
 
-    def read_data_dsp(self):
-        print("read_data_dsp")
+    def read_data_dsp_train(self):
+        print("read_data_dsp_train")
         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/clfAnalysis/data/dsp.txt"
+        file += "pointProyect/clfAnalysis/data/dsp_train.txt"
 
         data = pd.read_csv(file, sep=" ", header=0)
         data = data.drop(['X'], axis=1)
         data = data.drop(['Y'], axis=1)
         data = data.drop(['Z'], axis=1)
 
-        self.Classification = np.array(data.Classification)
+        self.Classification_train = np.array(data.Classification)
         data = data.drop(['Classification'], axis=1)
 
-        self.dsp = data.to_numpy()
+        self.dsp_train = data.to_numpy()
 
-        print("datos_classification:", len(self.Classification))
-        print("datos_dsp:", self.dsp.shape)
+        print("datos_Classification_train:", len(self.Classification_train))
+        print("dsp_train:", self.dsp.shape)
+
+    def read_data_dsp_valid(self):
+        print("read_data_dsp_valid")
+        file = ""
+        file += self.parSer.prefix
+        file += "pointProyect/clfAnalysis/data/dsp_valid.txt"
+
+        data = pd.read_csv(file, sep=" ", header=0)
+        data = data.drop(['X'], axis=1)
+        data = data.drop(['Y'], axis=1)
+        data = data.drop(['Z'], axis=1)
+
+        self.Classification_valid = np.array(data.Classification)
+        data = data.drop(['Classification'], axis=1)
+
+        self.dsp_valid = data.to_numpy()
+
+        print("datos_Classification_valid:", len(self.Classification_valid))
+        print("dsp_valid:", self.dsp.shape)
 
     def setting_files_dsp(self):
         print("setting_files_dsp")
