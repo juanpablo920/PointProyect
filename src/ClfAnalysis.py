@@ -168,7 +168,7 @@ class clfAnalysis:
         # max_depth=numero de arboles #random_state=desde que arbol comnezar
         neigh = RandomForestClassifier(max_depth=15, random_state=0)
         # train=todos los descriptores=lista{nx8} #tr=datos etiquetados =columna classification
-        neigh.fit(train, tr)
+        neigh.fit(self.dsp, self.Classification)
         pre = neigh.predict(adjust)
         print("Accuracy: ", accuracy_score(ad, pre)*100, "%")
         print("F1: ", f1_score(ad, pre, average=None)*100, "%")
@@ -449,6 +449,7 @@ if __name__ == '__main__':
         clf_analysis.generate_files_dsp(radius_dsp)
     elif opcion == "2":
         clf_analysis.read_data_dsp()
+        clf_analysis.RandomForestClassifier()
     elif opcion == "3":
         pass
     else:
