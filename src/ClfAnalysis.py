@@ -262,33 +262,30 @@ class clfAnalysis:
         clf = svm.SVC()
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
-        # tec= etiquetas de validacion y pre lo que predijo
-        print("-> Accuracy: ", accuracy_score(
-            self.Classification_valid, pre)*100, "%")
-        print("-> F1: ", f1_score(self.Classification_valid,
-              pre, average=None)*100, "%")
+        print("-> Accuracy: ",
+              accuracy_score(self.Classification_valid, pre)*100, "%")
+        print("-> F1: ",
+              f1_score(self.Classification_valid, pre, average=None)*100, "%")
 
     def Gaussiano(self):
         print("Gaussiano")
         clf = GaussianNB()
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
-        # tec= etiquetas de validacion y pre lo que predijo
-        print("-> Accuracy: ", accuracy_score(
-            self.Classification_valid, pre)*100, "%")
-        print("-> F1: ", f1_score(self.Classification_valid,
-              pre, average=None)*100, "%")
+        print("-> Accuracy: ",
+              accuracy_score(self.Classification_valid, pre)*100, "%")
+        print("-> F1: ",
+              f1_score(self.Classification_valid, pre, average=None)*100, "%")
 
     def Rocchio(self):
         print("Rocchio")
         clf = NearestCentroid()
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
-        # tec= etiquetas de validacion y pre lo que predijo
-        print("-> Accuracy: ", accuracy_score(
-            self.Classification_valid, pre)*100, "%")
-        print("-> F1: ", f1_score(self.Classification_valid,
-              pre, average=None)*100, "%")
+        print("-> Accuracy: ",
+              accuracy_score(self.Classification_valid, pre)*100, "%")
+        print("-> F1: ",
+              f1_score(self.Classification_valid, pre, average=None)*100, "%")
 
     def DecisionTreeClassifier(self):
 
