@@ -258,18 +258,18 @@ class clfAnalysis:
         b2 = f1_score(te, pre, average=None)*100
 
     def SVM(self):
-        # SVM
+        print("SVM")
         clf = svm.SVC()
-        clf.fit(trainc, trc)
-        pre = clf.predict(testc)
-        print("Accuracy: ", accuracy_score(tec, pre)*100, "%")
-        print("F1: ", f1_score(tec, pre, average=None)*100, "%")
-        a3 = accuracy_score(tec, pre)*100
-        b3 = f1_score(tec, pre, average=None)*100
+        clf.fit(self.dsp_train, self.Classification_train)
+        pre = clf.predict(self.dsp_valid)
+        # tec= etiquetas de validacion y pre lo que predijo
+        print("-> Accuracy: ", accuracy_score(
+            self.Classification_valid, pre)*100, "%")
+        print("-> F1: ", f1_score(self.Classification_valid,
+              pre, average=None)*100, "%")
 
     def Gaussiano(self):
         print("Gaussiano")
-
         clf = GaussianNB()
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
@@ -474,8 +474,6 @@ class clfAnalysis:
         df.to_excel(writer, sheet_name='Completos', index=False)
         writer.save()
 
-# RMSE
-
 
 if __name__ == '__main__':
     clf_analysis = clfAnalysis()
@@ -513,6 +511,8 @@ if __name__ == '__main__':
         clf_analysis.Gaussiano()
         print("")
         clf_analysis.Rocchio()
+        print("")
+        clf_analysis.SVM()
     elif opcion == "3":
         pass
     else:
