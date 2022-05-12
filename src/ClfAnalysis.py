@@ -280,15 +280,15 @@ class clfAnalysis:
               pre, average=None)*100, "%")
 
     def Rocchio(self):
-
-        # Rocchio
+        print("Rocchio")
         clf = NearestCentroid()
-        clf.fit(trainc, trc)
-        pre = clf.predict(testc)
-        print("Accuracy: ", accuracy_score(tec, pre)*100, "%")
-        print("F1: ", f1_score(tec, pre, average=None)*100, "%")
-        a2 = accuracy_score(tec, pre)*100
-        b2 = f1_score(tec, pre, average=None)*100
+        clf.fit(self.dsp_train, self.Classification_train)
+        pre = clf.predict(self.dsp_valid)
+        # tec= etiquetas de validacion y pre lo que predijo
+        print("-> Accuracy: ", accuracy_score(
+            self.Classification_valid, pre)*100, "%")
+        print("-> F1: ", f1_score(self.Classification_valid,
+              pre, average=None)*100, "%")
 
     def DecisionTreeClassifier(self):
 
@@ -512,6 +512,7 @@ if __name__ == '__main__':
         print("-"*10)
         clf_analysis.Gaussiano()
         print("")
+        clf_analysis.Rocchio()
     elif opcion == "3":
         pass
     else:
