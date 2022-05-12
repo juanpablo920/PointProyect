@@ -7,8 +7,8 @@ parSer = ParamServer()
 
 file = ""
 file += parSer.prefix
-file += "pointProyect/data/training/"
-file += parSer.data_file
+file += "pointProyect/data/validation/"
+file += parSer.data_file_valid
 
 data = pd.read_csv(file, sep=" ", header=0)
 Classification = np.array(data.Classification)

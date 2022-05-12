@@ -8,7 +8,7 @@ parSer = ParamServer()
 pwd_file = ""
 pwd_file += parSer.prefix
 pwd_file += "pointProyect/data/training/"
-file = pwd_file + parSer.data_file
+file = pwd_file + parSer.data_file_train
 
 data = pd.read_csv(file, sep=" ", header=0)
 Classification = np.array(data.Classification)/100

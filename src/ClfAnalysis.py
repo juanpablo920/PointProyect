@@ -33,82 +33,75 @@ class clfAnalysis:
     def __init__(self):
         self.parSer = ParamServer()
 
-    def read_data_train(self):
-        print("read_data_train")
-        file = ""
-        file += self.parSer.prefix
-        file += "pointProyect/data/training/"
-        file += self.parSer.data_file_train
+    def read_data(self):
+        print("read_data")
+        file_base = ""
+        file_base += self.parSer.prefix
+        file_base += "pointProyect/data/"
 
-        data = pd.read_csv(file, sep=" ", header=0)
-        self.Classification_train_float = np.array(data.Classification)
-        self.Classification_train = self.Classification_train_float.astype(int)
+        file_train = file_base + "training/"
+        file_train += self.parSer.data_file_train
+
+        file_valid = file_base + "validation/"
+        file_valid += self.parSer.data_file_valid
+
+        # train
+        data = pd.read_csv(file_train, sep=" ", header=0)
+        self.Classification_train = np.array(data.Classification, dtype=np.int)
         data = data.drop(['Classification'], axis=1)
 
         self.pcd_train = o3d.geometry.PointCloud()
         self.pcd_train.points = o3d.utility.Vector3dVector(data.to_numpy())
 
-        print("datos:", len(self.pcd_train.points))
+        print("-> datos_train: ", len(self.pcd_train.points))
 
-    def read_data_valid(self):
-        print("read_data_valid")
-        file = ""
-        file += self.parSer.prefix
-        file += "pointProyect/data/validation/"
-        file += self.parSer.data_file_valid
-
-        data = pd.read_csv(file, sep=" ", header=0)
-        self.Classification_valid_float = np.array(data.Classification)
-        self.Classification_valid = self.Classification_valid_float.astype(int)
-        print(self.Classification_valid)
+        # valid
+        data = pd.read_csv(file_valid, sep=" ", header=0)
+        self.Classification_valid = np.array(data.Classification, dtype=np.int)
         data = data.drop(['Classification'], axis=1)
 
         self.pcd_valid = o3d.geometry.PointCloud()
         self.pcd_valid.points = o3d.utility.Vector3dVector(data.to_numpy())
 
-        print("datos:", len(self.pcd_valid.points))
+        print("-> datos_valid: ", len(self.pcd_valid.points))
 
-    def read_data_dsp_train(self):
-        print("read_data_dsp_train")
-        file = ""
-        file += self.parSer.prefix
-        file += "pointProyect/clfAnalysis/data/dsp_train.txt"
+    def read_data_dsp(self):
+        print("read_data_dsp")
 
-        data = pd.read_csv(file, sep=" ", header=0)
+        file_base = ""
+        file_base += self.parSer.prefix
+        file_base += "pointProyect/clfAnalysis/data/"
+
+        file_train = file_base + "dsp_train.txt"
+        file_valid = file_base + "dsp_valid.txt"
+
+        # train
+        data = pd.read_csv(file_train, sep=" ", header=0)
         data = data.drop(['X'], axis=1)
         data = data.drop(['Y'], axis=1)
         data = data.drop(['Z'], axis=1)
 
-        self.Classification_train_float = np.array(data.Classification)
-        self.Classification_train = self.Classification_train_float.astype(int)
+        self.Classification_train = np.array(data.Classification, dtype=np.int)
         data = data.drop(['Classification'], axis=1)
 
         self.dsp_train = data.to_numpy()
 
-        print("datos_Classification_train:", len(self.Classification_train))
-        print("dsp_valid:", self.dsp_train.shape)
+        print("-> Classification_train:", len(self.Classification_train))
+        print("-> dsp_train:", self.dsp_train.shape)
 
-    def read_data_dsp_valid(self):
-        print("read_data_dsp_valid")
-        file = ""
-        file += self.parSer.prefix
-        file += "pointProyect/clfAnalysis/data/dsp_valid.txt"
-
-        data = pd.read_csv(file, sep=" ", header=0)
+        # valid
+        data = pd.read_csv(file_valid, sep=" ", header=0)
         data = data.drop(['X'], axis=1)
         data = data.drop(['Y'], axis=1)
         data = data.drop(['Z'], axis=1)
 
-        self.Classification_valid_float = np.array(data.Classification)
-        self.Classification_valid = self.Classification_valid_float.astype(int)
-
-        
+        self.Classification_valid = np.array(data.Classification, dtype=np.int)
         data = data.drop(['Classification'], axis=1)
 
         self.dsp_valid = data.to_numpy()
 
-        print("datos_Classification_valid:", len(self.Classification_valid))
-        print("dsp_valid:", self.dsp_valid.shape)
+        print("-> datos_Classification_valid:", len(self.Classification_valid))
+        print("-> dsp_valid:", self.dsp_valid.shape)
 
     def setting_files_dsp(self):
         print("setting_files_dsp")
@@ -187,15 +180,18 @@ class clfAnalysis:
         with open(file, 'a') as f:
             f.write(linea+"\n")
 
-    def generate_files_dsp_train(self, radius):
-        print("generate_files_dsp_train")
+    def generate_files_dsp(self, radius):
+        print("generate_files_dsp")
         print(">"*10)
         print("-> radius: ", radius)
         print("-> calculo de matrices de covarianza")
         self.pcd_train.estimate_covariances(
             search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
 
-        print("-> calculo valores propios e")
+        self.pcd_valid.estimate_covariances(
+            search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
+
+        print("-> save_data_dps_train")
         for idx, matricesCov_tmp in enumerate(self.pcd_train.covariances):
             X, Y, Z = self.pcd_train.points[idx]
             Classification_tmp = self.Classification_train[idx]
@@ -210,15 +206,7 @@ class clfAnalysis:
             self.save_data_dps("dsp_train", X, Y, Z,
                                Classification_tmp, dsp_values_tmp)
 
-    def generate_files_dsp_valid(self, radius):
-        print("generate_files_dsp_valid")
-        print(">"*10)
-        print("-> radius: ", radius)
-        print("-> calculo de matrices de covarianza")
-        self.pcd_valid.estimate_covariances(
-            search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
-
-        print("-> calculo valores propios e")
+        print("-> save_data_dps_valid")
         for idx, matricesCov_tmp in enumerate(self.pcd_valid.covariances):
             X, Y, Z = self.pcd_valid.points[idx]
             Classification_tmp = self.Classification_valid[idx]
@@ -280,16 +268,16 @@ class clfAnalysis:
         b3 = f1_score(tec, pre, average=None)*100
 
     def Gaussiano(self):
-
-        # Gaussiano
+        print("Gaussiano")
 
         clf = GaussianNB()
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
         # tec= etiquetas de validacion y pre lo que predijo
-        print("Accuracy: ", accuracy_score(
+        print("-> Accuracy: ", accuracy_score(
             self.Classification_valid, pre)*100, "%")
-        print("F1: ", f1_score(self.Classification_valid, pre, average=None)*100, "%")
+        print("-> F1: ", f1_score(self.Classification_valid,
+              pre, average=None)*100, "%")
 
     def Rocchio(self):
 
@@ -486,7 +474,6 @@ class clfAnalysis:
         df.to_excel(writer, sheet_name='Completos', index=False)
         writer.save()
 
-
 # RMSE
 
 
@@ -512,17 +499,19 @@ if __name__ == '__main__':
             exit()
         print("")
         clf_analysis.setting_files_dsp()
-        clf_analysis.read_data_train()
-        clf_analysis.read_data_valid()
+        clf_analysis.read_data()
         print("-"*10)
         radius_dsp = float(input("radius: "))
         print("-"*10)
-        clf_analysis.generate_files_dsp_train(radius_dsp)
-        clf_analysis.generate_files_dsp_valid(radius_dsp)
+        clf_analysis.generate_files_dsp(radius_dsp)
     elif opcion == "2":
-        clf_analysis.read_data_dsp_train()
-        clf_analysis.read_data_dsp_valid()
+        print("="*10)
+        print("generar archivos clf")
+        print("")
+        clf_analysis.read_data_dsp()
+        print("-"*10)
         clf_analysis.Gaussiano()
+        print("")
     elif opcion == "3":
         pass
     else:

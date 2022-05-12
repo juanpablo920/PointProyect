@@ -18,19 +18,16 @@ class dpsAnalysis:
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/data/training/"
-        file += self.parSer.data_file
+        file += self.parSer.data_file_train
 
         data = pd.read_csv(file, sep=" ", header=0)
-        # self.X = np.array(data.X)
-        # self.Y = np.array(data.Y)
-        # self.Z = np.array(data.Z)
         self.Classification = np.array(data.Classification)
         data = data.drop(['Classification'], axis=1)
 
-        self.pcd_xyz = o3d.geometry.PointCloud()
-        self.pcd_xyz.points = o3d.utility.Vector3dVector(data.to_numpy())
+        self.pcd = o3d.geometry.PointCloud()
+        self.pcd.points = o3d.utility.Vector3dVector(data.to_numpy())
 
-        print("datos:", len(self.pcd_xyz.points))
+        print("datos:", len(self.pcd.points))
 
     def setting_files_P123(self):
         print("setting_files_P123")
@@ -142,12 +139,12 @@ class dpsAnalysis:
             print(">"*10)
             print("-> radius: ", radius)
             print("-> calculo de matrices de covarianza")
-            self.pcd_xyz.estimate_covariances(
+            self.pcd.estimate_covariances(
                 search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
 
             print("-> calculo valores propios e")
             e = []
-            for matricesCov_tmp in self.pcd_xyz.covariances:
+            for matricesCov_tmp in self.pcd.covariances:
                 e1, e2, e3 = self.calculo_valores_propios(matricesCov_tmp)
                 e.append([e1, e2, e3])
 
@@ -194,12 +191,12 @@ class dpsAnalysis:
         print(">"*10)
         print("-> radius: ", radius)
         print("-> calculo de matrices de covarianza")
-        self.pcd_xyz.estimate_covariances(
+        self.pcd.estimate_covariances(
             search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
 
         print("-> calculo valores propios e")
         e = []
-        for matricesCov_tmp in self.pcd_xyz.covariances:
+        for matricesCov_tmp in self.pcd.covariances:
             e1, e2, e3 = self.calculo_valores_propios(matricesCov_tmp)
             e.append([e1, e2, e3])
 
@@ -207,7 +204,7 @@ class dpsAnalysis:
         for dsp_type in self.parSer.dsp_types:
             for idx, e_tmp in enumerate(e):
                 e1, e2, e3 = e_tmp
-                X, Y, Z = self.pcd_xyz.points[idx]
+                X, Y, Z = self.pcd.points[idx]
                 dsp_value = self.calculo_dsp_type(dsp_type, e1, e2, e3)
                 self.save_data_dps_type(dsp_type, X, Y, Z, dsp_value)
 
