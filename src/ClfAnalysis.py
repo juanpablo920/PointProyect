@@ -47,7 +47,7 @@ class clfAnalysis:
 
         # train
         data = pd.read_csv(file_train, sep=" ", header=0)
-        self.Classification_train = np.array(data.Classification, dtype=np.int)
+        self.Classification_train = np.array(data.Classification, dtype=int)
         data = data.drop(['Classification'], axis=1)
 
         self.pcd_train = o3d.geometry.PointCloud()
@@ -57,7 +57,7 @@ class clfAnalysis:
 
         # valid
         data = pd.read_csv(file_valid, sep=" ", header=0)
-        self.Classification_valid = np.array(data.Classification, dtype=np.int)
+        self.Classification_valid = np.array(data.Classification, dtype=int)
         data = data.drop(['Classification'], axis=1)
 
         self.pcd_valid = o3d.geometry.PointCloud()
@@ -81,7 +81,7 @@ class clfAnalysis:
         data = data.drop(['Y'], axis=1)
         data = data.drop(['Z'], axis=1)
 
-        self.Classification_train = np.array(data.Classification, dtype=np.int)
+        self.Classification_train = np.array(data.Classification, dtype=int)
         data = data.drop(['Classification'], axis=1)
 
         self.dsp_train = data.to_numpy()
@@ -95,7 +95,7 @@ class clfAnalysis:
         data = data.drop(['Y'], axis=1)
         data = data.drop(['Z'], axis=1)
 
-        self.Classification_valid = np.array(data.Classification, dtype=np.int)
+        self.Classification_valid = np.array(data.Classification, dtype=int)
         data = data.drop(['Classification'], axis=1)
 
         self.dsp_valid = data.to_numpy()
