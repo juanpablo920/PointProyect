@@ -53,7 +53,7 @@ class clfAnalysis:
         self.pcd_train = o3d.geometry.PointCloud()
         self.pcd_train.points = o3d.utility.Vector3dVector(data.to_numpy())
 
-        print("-> datos_train: ", len(self.pcd_train.points))
+        print("-> datos_train:", len(self.pcd_train.points))
 
         # valid
         data = pd.read_csv(file_valid, sep=" ", header=0)
@@ -63,7 +63,7 @@ class clfAnalysis:
         self.pcd_valid = o3d.geometry.PointCloud()
         self.pcd_valid.points = o3d.utility.Vector3dVector(data.to_numpy())
 
-        print("-> datos_valid: ", len(self.pcd_valid.points))
+        print("-> datos_valid:", len(self.pcd_valid.points))
 
     def read_data_dsp(self):
         print("read_data_dsp")
