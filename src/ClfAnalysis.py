@@ -1,5 +1,4 @@
 import os
-from unittest.mock import seal
 import numpy as np
 import open3d as o3d
 import pandas as pd
@@ -221,6 +220,32 @@ class clfAnalysis:
             self.save_data_dps("dsp_valid", X, Y, Z,
                                Classification_tmp, dsp_values_tmp)
 
+    def setting_files_clf(self):
+        print("setting_files_clf")
+        file_base = ""
+        file_base += self.parSer.prefix
+        file_base += "pointProyect/clfAnalysis/data/"
+        file = file_base + "clf_report.txt"
+
+        with open(file, 'w') as f:
+            f.write("clf accuracy f1_2 f1_8 f1_16 \n")
+
+    def save_report_clf_type(self, clf, accuracy, f1):
+        file_base = ""
+        file_base += self.parSer.prefix
+        file_base += "pointProyect/clfAnalysis/data/"
+        file = file_base + "clf_report.txt"
+
+        linea = ""
+        linea += str(clf)
+        linea += " " + str(accuracy)
+        linea += " " + str(f1[0])
+        linea += " " + str(f1[1])
+        linea += " " + str(f1[2])
+
+        with open(file, 'a') as f:
+            f.write(linea+"\n")
+
     def RandomForestClassifier(self):
 
         # max_depth=numero de arboles #random_state=desde que arbol comnezar
@@ -262,30 +287,42 @@ class clfAnalysis:
         clf = svm.SVC()
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
-        print("-> Accuracy: ",
-              accuracy_score(self.Classification_valid, pre)*100, "%")
-        print("-> F1: ",
-              f1_score(self.Classification_valid, pre, average=None)*100, "%")
+
+        accuracy = accuracy_score(self.Classification_valid, pre)*100
+        f1 = f1_score(self.Classification_valid, pre, average=None)*100
+
+        print("-> Accuracy: ", accuracy, "%")
+        print("-> F1: ", f1, "%")
+
+        self.save_report_clf_type("SVM", accuracy, f1)
 
     def Gaussiano(self):
         print("Gaussiano")
         clf = GaussianNB()
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
-        print("-> Accuracy: ",
-              accuracy_score(self.Classification_valid, pre)*100, "%")
-        print("-> F1: ",
-              f1_score(self.Classification_valid, pre, average=None)*100, "%")
+
+        accuracy = accuracy_score(self.Classification_valid, pre)*100
+        f1 = f1_score(self.Classification_valid, pre, average=None)*100
+
+        print("-> Accuracy: ", accuracy, "%")
+        print("-> F1: ", f1, "%")
+
+        self.save_report_clf_type("Gaussiano", accuracy, f1)
 
     def Rocchio(self):
         print("Rocchio")
         clf = NearestCentroid()
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
-        print("-> Accuracy: ",
-              accuracy_score(self.Classification_valid, pre)*100, "%")
-        print("-> F1: ",
-              f1_score(self.Classification_valid, pre, average=None)*100, "%")
+
+        accuracy = accuracy_score(self.Classification_valid, pre)*100
+        f1 = f1_score(self.Classification_valid, pre, average=None)*100
+
+        print("-> Accuracy: ", accuracy, "%")
+        print("-> F1: ", f1, "%")
+
+        self.save_report_clf_type("Rocchio", accuracy, f1)
 
     def DecisionTreeClassifier(self):
 
@@ -504,12 +541,13 @@ if __name__ == '__main__':
         print("generar archivos clf")
         print("")
         clf_analysis.read_data_dsp()
+        clf_analysis.setting_files_clf()
         print("-"*10)
         clf_analysis.Gaussiano()
         print("")
         clf_analysis.Rocchio()
         print("")
-        clf_analysis.SVM()
+        # clf_analysis.SVM()
     elif opcion == "3":
         pass
     else:

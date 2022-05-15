@@ -11,7 +11,7 @@ pwd_file += "pointProyect/data/training/"
 file = pwd_file + parSer.data_file_train
 
 data = pd.read_csv(file, sep=" ", header=0)
-Classification = np.array(data.Classification)/100
+Classification = np.array(data.Classification)/100.0
 data = data.drop(['Classification'], axis=1)
 
 pcd_xyz = o3d.geometry.PointCloud()
@@ -28,7 +28,7 @@ lowPcd_xyz = pcd_xyz.uniform_down_sample(every_k_points)
 print("low datos:", len(lowPcd_xyz.points))
 
 name_x = (
-    parSer.data_file[:len(parSer.data_file)-4]+"_low_"+str(every_k_points)+".txt")
+    parSer.data_file_train[:len(parSer.data_file_train)-4]+"_low_"+str(every_k_points)+".txt")
 
 file = pwd_file + name_x
 with open(file, 'w') as f:

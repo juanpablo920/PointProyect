@@ -6,7 +6,7 @@ class ParamServer:
         # /home/juanpablo
         self.prefix = "/home/pocampo/"
 
-        # example
+        # example_train
         # PCD_NIR_training_4M_low50
         self.data_file = "PCD_NIR_training_4M_low50.txt"
 
