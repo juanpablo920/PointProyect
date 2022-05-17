@@ -8,6 +8,8 @@
 3 - bash
     bash Init_termial.sh
 
+source devel/setup.bash
+
 scp -r pocampo@172.19.18.35:/home/pocampo/pointProyect/dpsAnalysis /home/sirui/Documents/Johan_Avila
 scp -r pocampo@172.19.18.35:/home/pocampo/pointProyect/dpsAnalysis /home/juanocampo/Vídeos
 
