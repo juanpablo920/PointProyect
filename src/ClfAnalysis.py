@@ -102,8 +102,8 @@ class clfAnalysis:
         print("-> datos_Classification_valid:", len(self.Classification_valid))
         print("-> dsp_valid:", self.dsp_valid.shape)
 
-    def setting_files_dsp(self):
-        print("setting_files_dsp")
+    def setting_dsp(self):
+        print("setting_dsp")
         file_base = ""
         file_base += self.parSer.prefix
         file_base += "pointProyect/clfAnalysis/data/"
@@ -121,6 +121,75 @@ class clfAnalysis:
 
         with open(file_valid, 'w') as f:
             f.write(encabezado+"\n")
+
+    def setting_clf(self):
+        print("setting_clf")
+        file_base = ""
+        file_base += self.parSer.prefix
+        file_base += "pointProyect/clfAnalysis/data/"
+        file = file_base + "clf_report.txt"
+
+        with open(file, 'w') as f:
+            f.write("clf accuracy f1_2 f1_8 f1_16\n")
+
+    # def setting_results(self):
+    #     print("setting_results")
+    #     file_base = ""
+    #     file_base += self.parSer.prefix
+    #     file_base += "pointProyect/data/results/"
+    #     file = file_base + "clf_" + self.parSer.data_file_valid
+
+    #     with open(file, 'w') as f:
+    #         f.write("X Y Z Classification\n")
+
+    def save_dps(self, dsp_type, X, Y, Z, Classification, dsp_values):
+        file = ""
+        file += self.parSer.prefix
+        file += "pointProyect/clfAnalysis/data/"
+        file += dsp_type + ".txt"
+
+        linea = ""
+        linea += str(X)
+        linea += " " + str(Y)
+        linea += " " + str(Z)
+        linea += " " + str(Classification)
+
+        for dsp_value in dsp_values:
+            linea += " " + str(dsp_value)
+
+        with open(file, 'a') as f:
+            f.write(linea+"\n")
+
+    def save_report_clf_type(self, clf, accuracy, f1):
+        file_base = ""
+        file_base += self.parSer.prefix
+        file_base += "pointProyect/clfAnalysis/data/"
+        file = file_base + "clf_report.txt"
+
+        linea = ""
+        linea += str(clf)
+        linea += " " + str(accuracy)
+        linea += " " + str(f1[0])
+        linea += " " + str(f1[1])
+        linea += " " + str(f1[2])
+
+        with open(file, 'a') as f:
+            f.write(linea+"\n")
+
+    # def save_results(self, X, Y, Z, Classification):
+    #     file_base = ""
+    #     file_base += self.parSer.prefix
+    #     file_base += "pointProyect/data/results/"
+    #     file = file_base + "clf_" + self.parSer.data_file_valid
+
+    #     linea = ""
+    #     linea += str(X)
+    #     linea += " " + str(Y)
+    #     linea += " " + str(Z)
+    #     linea += " " + str(Classification)
+
+    #     with open(file, 'a') as f:
+    #         f.write(linea+"\n")
 
     def calculo_valores_propios(self, matricesCov):
         val_propio_cov = np.linalg.eigvals(matricesCov)
@@ -161,26 +230,8 @@ class clfAnalysis:
             dsp_value = e1 + e2 + e3
         return dsp_value
 
-    def save_data_dps(self, dsp_type, X, Y, Z, Classification, dsp_values):
-        file = ""
-        file += self.parSer.prefix
-        file += "pointProyect/clfAnalysis/data/"
-        file += dsp_type + ".txt"
-
-        linea = ""
-        linea += str(X)
-        linea += " " + str(Y)
-        linea += " " + str(Z)
-        linea += " " + str(Classification)
-
-        for dsp_value in dsp_values:
-            linea += " " + str(dsp_value)
-
-        with open(file, 'a') as f:
-            f.write(linea+"\n")
-
-    def generate_files_dsp(self, radius):
-        print("generate_files_dsp")
+    def generate_dsp(self, radius):
+        print("generate_dsp")
         print(">"*10)
         print("-> radius: ", radius)
         print("-> calculo de matrices de covarianza")
@@ -190,7 +241,7 @@ class clfAnalysis:
         self.pcd_valid.estimate_covariances(
             search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
 
-        print("-> save_data_dps_train")
+        print("-> save_dps_train")
         for idx, matricesCov_tmp in enumerate(self.pcd_train.covariances):
             X, Y, Z = self.pcd_train.points[idx]
             Classification_tmp = self.Classification_train[idx]
@@ -202,10 +253,10 @@ class clfAnalysis:
                 dsp_value = self.calculo_dsp_type(dsp_type, e1, e2, e3)
                 dsp_values_tmp.append(dsp_value)
 
-            self.save_data_dps("dsp_train", X, Y, Z,
-                               Classification_tmp, dsp_values_tmp)
+            self.save_dps("dsp_train", X, Y, Z,
+                          Classification_tmp, dsp_values_tmp)
 
-        print("-> save_data_dps_valid")
+        print("-> save_dps_valid")
         for idx, matricesCov_tmp in enumerate(self.pcd_valid.covariances):
             X, Y, Z = self.pcd_valid.points[idx]
             Classification_tmp = self.Classification_valid[idx]
@@ -217,34 +268,8 @@ class clfAnalysis:
                 dsp_value = self.calculo_dsp_type(dsp_type, e1, e2, e3)
                 dsp_values_tmp.append(dsp_value)
 
-            self.save_data_dps("dsp_valid", X, Y, Z,
-                               Classification_tmp, dsp_values_tmp)
-
-    def setting_files_clf(self):
-        print("setting_files_clf")
-        file_base = ""
-        file_base += self.parSer.prefix
-        file_base += "pointProyect/clfAnalysis/data/"
-        file = file_base + "clf_report.txt"
-
-        with open(file, 'w') as f:
-            f.write("clf accuracy f1_2 f1_8 f1_16 \n")
-
-    def save_report_clf_type(self, clf, accuracy, f1):
-        file_base = ""
-        file_base += self.parSer.prefix
-        file_base += "pointProyect/clfAnalysis/data/"
-        file = file_base + "clf_report.txt"
-
-        linea = ""
-        linea += str(clf)
-        linea += " " + str(accuracy)
-        linea += " " + str(f1[0])
-        linea += " " + str(f1[1])
-        linea += " " + str(f1[2])
-
-        with open(file, 'a') as f:
-            f.write(linea+"\n")
+            self.save_dps("dsp_valid", X, Y, Z,
+                          Classification_tmp, dsp_values_tmp)
 
     def RandomForestClassifier(self):
 
@@ -530,18 +555,18 @@ if __name__ == '__main__':
         if opcion != "1":
             exit()
         print("")
-        clf_analysis.setting_files_dsp()
+        clf_analysis.setting_dsp()
         clf_analysis.read_data()
         print("-"*10)
         radius_dsp = float(input("radius: "))
         print("-"*10)
-        clf_analysis.generate_files_dsp(radius_dsp)
+        clf_analysis.generate_dsp(radius_dsp)
     elif opcion == "2":
         print("="*10)
         print("generar archivos clf")
         print("")
         clf_analysis.read_data_dsp()
-        clf_analysis.setting_files_clf()
+        clf_analysis.setting_clf()
         print("-"*10)
         clf_analysis.Gaussiano()
         print("")

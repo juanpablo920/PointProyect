@@ -29,8 +29,8 @@ class dpsAnalysis:
 
         print("datos:", len(self.pcd.points))
 
-    def setting_files_P123(self):
-        print("setting_files_P123")
+    def setting_P123(self):
+        print("setting_P123")
         file_base = ""
         file_base += self.parSer.prefix
         file_base += "pointProyect/dpsAnalysis/radius/data/P123/P_"
@@ -44,8 +44,8 @@ class dpsAnalysis:
         with open(file_time, 'w') as f:
             f.write("radius time\n")
 
-    def setting_files_dsp(self):
-        print("setting_files_dsp")
+    def setting_dsp(self):
+        print("setting_dsp")
         file_base = ""
         file_base += self.parSer.prefix
         file_base += "pointProyect/dpsAnalysis/radius/data/dsp/"
@@ -98,42 +98,39 @@ class dpsAnalysis:
             dsp_value = e1 + e2 + e3
         return dsp_value
 
-    def save_data_P123_dps_type(self, dsp_type, radius, P12, P13, P32):
+    def save_P123_dps_type(self, dsp_type, radius, P12, P13, P32):
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/dpsAnalysis/radius/data/P123/P_"
         file += dsp_type + ".txt"
         with open(file, 'a') as f:
             f.write(
-                str(radius)+" " + str(P12)+" " + str(P13)+" "+str(P32)+"\n")
+                str(radius)+" "+str(P12)+" "+str(P13)+" "+str(P32)+"\n")
 
-    def save_data_P123_time(self, radius, time):
+    def save_P123_time(self, radius, time):
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/dpsAnalysis/radius/data/P123/P_time.txt"
         with open(file, 'a') as f:
             f.write(str(radius)+" "+str(time)+"\n")
 
-    def save_data_dps_type(self, dsp_type, X, Y, Z, dsp_value):
+    def save_dps_type(self, dsp_type, X, Y, Z, dsp_value):
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/dpsAnalysis/radius/data/dsp/"
         file += dsp_type + ".txt"
         with open(file, 'a') as f:
-            f.write(str(X) + " " +
-                    str(Y) + " " +
-                    str(Z) + " " +
-                    str(dsp_value)+"\n")
+            f.write(str(X)+" "+str(Y)+" "+str(Z)+" "+str(dsp_value)+"\n")
 
-    def save_data_dsp_radius(self, radius):
+    def save_dsp_radius(self, radius):
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/dpsAnalysis/radius/data/dsp/radius.txt"
         with open(file, 'a') as f:
             f.write(str(radius)+"\n")
 
-    def generate_files_P123(self, radius_init, radius_finish, radius_steps):
-        print("generate_files_P123")
+    def generate_P123(self, radius_init, radius_finish, radius_steps):
+        print("generate_P123")
         for radius in np.arange(radius_init, radius_finish, radius_steps):
             time_inicio = tm.time()
             print(">"*10)
@@ -148,7 +145,7 @@ class dpsAnalysis:
                 e1, e2, e3 = self.calculo_valores_propios(matricesCov_tmp)
                 e.append([e1, e2, e3])
 
-            print("-> save_data_P123_dps_type")
+            print("-> save_P123_dps_type")
             for dsp_type in self.parSer.dsp_types:
 
                 dsp_value_tmp = [[], [], []]
@@ -179,36 +176,30 @@ class dpsAnalysis:
                 #Marcador - Suelo
                 P32 = (
                     np.abs(marcador_mean - ground_mean)) / (3*(marcador_std + ground_std))
-                self.save_data_P123_dps_type(dsp_type, radius, P12, P13, P32)
+                self.save_P123_dps_type(dsp_type, radius, P12, P13, P32)
 
             e = None
             dsp_value_tmp = None
             time = tm.time() - time_inicio
-            self.save_data_P123_time(radius, time)
+            self.save_P123_time(radius, time)
 
-    def generate_files_dsp(self, radius):
-        print("generate_files_dsp")
+    def generate_dsp(self, radius):
+        print("generate_dsp")
         print(">"*10)
         print("-> radius: ", radius)
         print("-> calculo de matrices de covarianza")
         self.pcd.estimate_covariances(
             search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
 
-        print("-> calculo valores propios e")
-        e = []
-        for matricesCov_tmp in self.pcd.covariances:
+        print("-> save_dps_type")
+        for idx, matricesCov_tmp in enumerate(self.pcd.covariances):
             e1, e2, e3 = self.calculo_valores_propios(matricesCov_tmp)
-            e.append([e1, e2, e3])
-
-        print("-> save_data_dps_type")
-        for dsp_type in self.parSer.dsp_types:
-            for idx, e_tmp in enumerate(e):
-                e1, e2, e3 = e_tmp
+            for dsp_type in self.parSer.dsp_types:
                 X, Y, Z = self.pcd.points[idx]
                 dsp_value = self.calculo_dsp_type(dsp_type, e1, e2, e3)
-                self.save_data_dps_type(dsp_type, X, Y, Z, dsp_value)
+                self.save_dps_type(dsp_type, X, Y, Z, dsp_value)
 
-        self.save_data_dsp_radius(radius)
+        self.save_dsp_radius(radius)
 
     def graph_P123_dps_type(self, dps_type, P12, P13, P32, radius):
         pwd_imagen = ""
@@ -307,7 +298,7 @@ class dpsAnalysis:
         plt.savefig(pwd_imagen + "averages_P_vs_radius.png")
         plt.clf()
 
-    def generate_graphics_P123(self):
+    def graphics_P123(self):
         pwd_files = ""
         pwd_files += self.parSer.prefix
         pwd_files += "pointProyect/dpsAnalysis/radius/data/P123/"
@@ -388,7 +379,7 @@ class dpsAnalysis:
         plt.savefig(pwd_imagen + "histograms_" + dps_type + ".png")
         plt.clf()
 
-    def generate_graphics_dsp(self):
+    def graphics_dsp(self):
         pwd_files = ""
         pwd_files += self.parSer.prefix
         pwd_files += "pointProyect/dpsAnalysis/radius/data/dsp/"
@@ -439,7 +430,7 @@ if __name__ == '__main__':
         print("Opcion_x: continue")
         opcion = input("opcion: ")
         if opcion == "1":
-            dps_analysis.setting_files_P123()
+            dps_analysis.setting_P123()
         print("")
         dps_analysis.read_data()
         print("-"*10)
@@ -447,12 +438,12 @@ if __name__ == '__main__':
         radius_finish = float(input("radius_finish: "))
         radius_steps = float(input("radius_steps: "))
         print("-"*10)
-        dps_analysis.generate_files_P123(
+        dps_analysis.generate_P123(
             radius_init, radius_finish, radius_steps)
     elif opcion == "2":
         print("="*10)
         print("generar graficas P123")
-        dps_analysis.generate_graphics_P123()
+        dps_analysis.graphics_P123()
         print("")
     elif opcion == "3":
         print("="*10)
@@ -464,17 +455,17 @@ if __name__ == '__main__':
         if opcion != "1":
             exit()
         print("")
-        dps_analysis.setting_files_dsp()
+        dps_analysis.setting_dsp()
         dps_analysis.read_data()
         print("-"*10)
         radius_dsp = float(input("radius: "))
         print("-"*10)
-        dps_analysis.generate_files_dsp(radius_dsp)
+        dps_analysis.generate_dsp(radius_dsp)
     elif opcion == "4":
         print("="*10)
         print("generar graficas dsp")
         dps_analysis.read_data()
-        dps_analysis.generate_graphics_dsp()
+        dps_analysis.graphics_dsp()
         print("")
     else:
         print("="*10)

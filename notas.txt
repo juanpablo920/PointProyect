@@ -9,3 +9,10 @@
 - PCD_NIR_training_4M_low10 
     radius = 0.1:5:0.1 
     falta terminar los kn - null
+
+
+- src
+    - DspAnalysisRad
+    - lowResolutionPcd
+    - viewPcd
+- ultis 

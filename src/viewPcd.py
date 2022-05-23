@@ -7,8 +7,27 @@ parSer = ParamServer()
 
 file = ""
 file += parSer.prefix
-file += "pointProyect/data/validation/"
-file += parSer.data_file_valid
+
+print("Opcion_1: training")
+print("Opcion_2: validation")
+print("Opcion_3: results")
+print("")
+
+opcion = input("opcion: ")
+
+if opcion == "1":
+    file += "pointProyect/data/training/"
+    file += parSer.data_file_train
+elif opcion == "2":
+    file += "pointProyect/data/validation/"
+    file += parSer.data_file_valid
+elif opcion == "3":
+    file += "pointProyect/data/results/"
+    file += "clf_" + parSer.data_file_valid
+else:
+    print("="*10)
+    print("no es una opcion '{opcion}'")
+    exit()
 
 data = pd.read_csv(file, sep=" ", header=0)
 Classification = np.array(data.Classification)
