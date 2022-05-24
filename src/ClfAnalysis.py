@@ -271,45 +271,61 @@ class clfAnalysis:
             self.save_dps("dsp_valid", X, Y, Z,
                           Classification_tmp, dsp_values_tmp)
 
-    def RandomForestClassifier(self):
+    def RandomForest(self):
+        print("RandomForest")
+        clf = RandomForestClassifier(
+            max_depth=len(self.parSer.dsp_types),
+            random_state=0)
 
-        # max_depth=numero de arboles #random_state=desde que arbol comnezar
-        neigh = RandomForestClassifier(max_depth=15, random_state=0)
-        # train=todos los descriptores=lista{nx8} #tr=datos etiquetados =columna classification
-        neigh.fit(self.dsp, self.Classification)
-        pre = neigh.predict(adjust)
-        print("Accuracy: ", accuracy_score(ad, pre)*100, "%")
-        print("F1: ", f1_score(ad, pre, average=None)*100, "%")
+        clf.fit(self.dsp_train, self.Classification_train)
+        pre = clf.predict(self.dsp_valid)
 
-        a = []
-        i = 1
-        while(i < 50):
-            clf = RandomForestClassifier(max_depth=i, random_state=0)
-            clf.fit(train, tr)
-            pre = clf.predict(adjust)
-            a.append(accuracy_score(ad, pre)*100)
-            print(i)
-            i = i+1
-        plt.plot(a)
-        plt.show()
+        accuracy = accuracy_score(self.Classification_valid, pre)*100
+        f1 = f1_score(self.Classification_valid, pre, average=None)*100
 
-    def KNeighborsClassifier(self):
+        print("-> Accuracy: ", accuracy, "%")
+        print("-> F1: ", f1, "%")
 
-        neigh = KNeighborsClassifier(n_neighbors=16)
-        neigh.fit(train, tr)
-        pre = neigh.predict(adjust)
-        print("Accuracy: ", accuracy_score(ad, pre)*100, "%")
-        print("F1: ", f1_score(ad, pre, average=None)*100, "%")
+        self.save_report_clf_type("RandomForest", accuracy, f1)
 
-        pre = neigh.predict(test)
-        print("Accuracy: ", accuracy_score(te, pre)*100, "%")
-        print("F1: ", f1_score(te, pre, average=None)*100, "%")
-        a2 = accuracy_score(te, pre)*100
-        b2 = f1_score(te, pre, average=None)*100
+        # a = []
+        # i = 1
+        # while(i < 50):
+        #     clf = RandomForestClassifier(max_depth=i, random_state=0)
+        #     clf.fit(train, tr)
+        #     pre = clf.predict(adjust)
+        #     a.append(accuracy_score(ad, pre)*100)
+        #     print(i)
+        #     i = i+1
+        # plt.plot(a)
+        # plt.show()
+
+    def KNeighbors(self):
+        print("KNeighbors")
+        clf = KNeighborsClassifier(
+            n_neighbors=len(self.parSer.dsp_types))
+
+        clf.fit(self.dsp_train, self.Classification_train)
+        pre = clf.predict(self.dsp_valid)
+
+        accuracy = accuracy_score(self.Classification_valid, pre)*100
+        f1 = f1_score(self.Classification_valid, pre, average=None)*100
+
+        print("-> Accuracy: ", accuracy, "%")
+        print("-> F1: ", f1, "%")
+
+        self.save_report_clf_type("KNeighbors", accuracy, f1)
+
+        # pre = neigh.predict(test)
+        # print("Accuracy: ", accuracy_score(te, pre)*100, "%")
+        # print("F1: ", f1_score(te, pre, average=None)*100, "%")
+        # a2 = accuracy_score(te, pre)*100
+        # b2 = f1_score(te, pre, average=None)*100
 
     def SVM(self):
         print("SVM")
         clf = svm.SVC()
+
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
 
@@ -324,6 +340,7 @@ class clfAnalysis:
     def Gaussiano(self):
         print("Gaussiano")
         clf = GaussianNB()
+
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
 
@@ -338,6 +355,7 @@ class clfAnalysis:
     def Rocchio(self):
         print("Rocchio")
         clf = NearestCentroid()
+
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
 
@@ -349,24 +367,32 @@ class clfAnalysis:
 
         self.save_report_clf_type("Rocchio", accuracy, f1)
 
-    def DecisionTreeClassifier(self):
+    def DecisionTree(self):
+        print("DecisionTree")
+        clf = DecisionTreeClassifier(
+            random_state=len(self.parSer.dsp_types))
 
-        neigh = DecisionTreeClassifier(random_state=40)
-        neigh.fit(train, tr)
-        pre = neigh.predict(adjust)
-        print("Accuracy: ", accuracy_score(ad, pre)*100, "%")
-        print("F1: ", f1_score(ad, pre, average=None)*100, "%")
+        clf.fit(self.dsp_train, self.Classification_train)
+        pre = clf.predict(self.dsp_valid)
 
-        p_train = 0.8  # Porcentaje de particion
-        trainc, testc, trc, tec = train_test_split(
-            descriptores, labels, test_size=1-p_train)  # Aleatorio
+        accuracy = accuracy_score(self.Classification_valid, pre)*100
+        f1 = f1_score(self.Classification_valid, pre, average=None)*100
 
-        p_train = 0.6  # Porcentaje de particion
-        train, prub, tr, pr = train_test_split(
-            descriptores, labels, test_size=1-p_train)  # Aleatorio
-        p_train = 0.5  # Porcentaje de particion
-        adjust, test, ad, te = train_test_split(
-            prub, pr, test_size=1-p_train)  # Aleatorio
+        print("-> Accuracy: ", accuracy, "%")
+        print("-> F1: ", f1, "%")
+
+        self.save_report_clf_type("DecisionTree", accuracy, f1)
+
+        # p_train = 0.8  # Porcentaje de particion
+        # trainc, testc, trc, tec = train_test_split(
+        #     descriptores, labels, test_size=1-p_train)  # Aleatorio
+
+        # p_train = 0.6  # Porcentaje de particion
+        # train, prub, tr, pr = train_test_split(
+        #     descriptores, labels, test_size=1-p_train)  # Aleatorio
+        # p_train = 0.5  # Porcentaje de particion
+        # adjust, test, ad, te = train_test_split(
+        #     prub, pr, test_size=1-p_train)  # Aleatorio
 
     def Ajuste(self):
 
@@ -568,11 +594,17 @@ if __name__ == '__main__':
         clf_analysis.read_data_dsp()
         clf_analysis.setting_clf()
         print("-"*10)
+        clf_analysis.RandomForest()
+        print("")
+        clf_analysis.KNeighbors()
+        print("")
+        # clf_analysis.SVM()
+        print("")
         clf_analysis.Gaussiano()
         print("")
         clf_analysis.Rocchio()
         print("")
-        # clf_analysis.SVM()
+        clf_analysis.DecisionTree()
     elif opcion == "3":
         pass
     else:
