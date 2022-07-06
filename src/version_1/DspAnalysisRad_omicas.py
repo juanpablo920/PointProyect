@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 import time as tm
-from params import ParamServer
+from version_2.params import ParamServer
 
 
 class dpsAnalysis:
@@ -20,9 +20,10 @@ class dpsAnalysis:
         file += "pointProyect/data/training/"
         file += self.parSer.data_file_train
 
-        data = pd.read_csv(file, sep=" ", header=0)
+        data = pd.read_csv(file, sep=",", header=0)
         self.Classification = np.array(data.Classification)
         data = data.drop(['Classification'], axis=1)
+        data = data.drop(['Intensity'], axis=1)
 
         self.pcd = o3d.geometry.PointCloud()
         self.pcd.points = o3d.utility.Vector3dVector(data.to_numpy())
@@ -153,29 +154,24 @@ class dpsAnalysis:
                     e1, e2, e3 = e_tmp
                     dsp_value = self.calculo_dsp_type(dsp_type, e1, e2, e3)
 
-                    if self.Classification[idx] == 16:  # Tree
+                    if self.Classification[idx] == 0:  # Tree
                         dsp_value_tmp[0].append(dsp_value)
-                    elif self.Classification[idx] == 2:  # ground
+                    elif self.Classification[idx] == 1:  # ground
                         dsp_value_tmp[1].append(dsp_value)
-                    elif self.Classification[idx] == 8:  # Model_keypoints
+                    elif self.Classification[idx] == 0:  # Model_keypoints
                         dsp_value_tmp[2].append(dsp_value)
 
                 tree_mean = np.mean(dsp_value_tmp[0])
                 tree_std = np.std(dsp_value_tmp[0])
                 ground_mean = np.mean(dsp_value_tmp[1])
                 ground_std = np.std(dsp_value_tmp[1])
-                marcador_mean = np.mean(dsp_value_tmp[2])
-                marcador_std = np.std(dsp_value_tmp[2])
 
                 #Arbol - suelo
                 P12 = (
                     np.abs(tree_mean - ground_mean)) / (3*(tree_std + ground_std))
                 #Arbol - Marcador
-                P13 = (
-                    np.abs(tree_mean - marcador_mean)) / (3*(tree_std + marcador_std))
-                #Marcador - Suelo
-                P32 = (
-                    np.abs(marcador_mean - ground_mean)) / (3*(marcador_std + ground_std))
+                P13 = 0
+                P32 = 0
                 self.save_P123_dps_type(dsp_type, radius, P12, P13, P32)
 
             e = None
@@ -218,17 +214,17 @@ class dpsAnalysis:
         plt.plot(radius, P12, 'C0', label="Arbol_suelo")
         plt.plot(
             radius[posMax_P12], P12[posMax_P12],
-            'vC0', label="P(max): {0:.2f}".format(max_P12))
+            'vC0', label="P(max): {0:f}".format(max_P12))
 
         plt.plot(radius, P13, 'C1', label="Arbol_Marcador")
         plt.plot(
             radius[posMax_P13], P13[posMax_P13],
-            'vC1', label="P(max): {0:.2f}".format(max_P13))
+            'vC1', label="P(max): {0:f}".format(max_P13))
 
         plt.plot(radius, P32, 'C2', label="Marcador_Suelo")
         plt.plot(
             radius[posMax_P32], P32[posMax_P32],
-            'vC2', label="P(max): {0:.2f}".format(max_P32))
+            'vC2', label="P(max): {0:f}".format(max_P32))
 
         plt.title(dps_type + "_vs_radius")
         plt.xlabel('radius')
@@ -266,7 +262,7 @@ class dpsAnalysis:
         plt.plot(radius, average_P, "C0", label="average_P")
         plt.plot(
             radius[posMax_average], average_P[posMax_average],
-            'vC0', label="average(max): {0:.2f} \n radius: {1:.2f}".format(max_average, radius[posMax_average][0]))
+            'vC0', label="average(max): {0:f} \n radius: {1:f}".format(max_average, radius[posMax_average][0]))
         plt.title("average_"+dps_type+"_vs_radius")
         plt.xlabel('radius')
         plt.ylabel('average_P')
@@ -289,7 +285,7 @@ class dpsAnalysis:
         plt.plot(radius, averages_P, "C0", label="averages_P")
         plt.plot(
             radius[posMax_averages], averages_P[posMax_averages],
-            'vC0', label="average(max): {0:.2f} \n radius: {1:.2f}".format(max_averages_P, radius[posMax_averages][0]))
+            'vC0', label="average(max): {0:f} \n radius: {1:f}".format(max_averages_P, radius[posMax_averages][0]))
         plt.title("averages_P_vs_radius")
         plt.xlabel('radius')
         plt.ylabel('averages_P')
@@ -388,9 +384,9 @@ class dpsAnalysis:
         name_files.remove("data.txt")
         name_files.remove("radius.txt")
 
-        pos_Tree = self.Classification == 16  # Tree
-        pos_ground = self.Classification == 2  # ground
-        pos_Model_keypoints = self.Classification == 8  # Model_keypoints
+        pos_Tree = self.Classification == 0  # Tree
+        pos_ground = self.Classification == 1  # ground
+        pos_Model_keypoints = self.Classification == 0  # Model_keypoints
 
         print("")
         for name_file in name_files:

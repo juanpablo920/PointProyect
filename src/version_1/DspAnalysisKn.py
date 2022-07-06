@@ -4,7 +4,7 @@ import open3d as o3d
 import pandas as pd
 import matplotlib.pyplot as plt
 import time as tm
-from params import ParamServer
+from version_2.params import ParamServer
 
 
 class dpsAnalysis:

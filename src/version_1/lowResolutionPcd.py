@@ -1,7 +1,7 @@
 import numpy as np
 import open3d as o3d
 import pandas as pd
-from params import ParamServer
+from version_2.params import ParamServer
 
 parSer = ParamServer()
 
