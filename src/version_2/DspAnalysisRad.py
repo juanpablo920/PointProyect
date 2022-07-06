@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 import time as tm
-from version_2.params import ParamServer
+from params import ParamServer
 
 
 class dpsAnalysis:
@@ -38,7 +38,7 @@ class dpsAnalysis:
         for dsp_type in self.parSer.dsp_types:
             file_P123 = file_base + dsp_type + ".txt"
             with open(file_P123, 'w') as f:
-                f.write("radius P12 P13 P32\n")
+                f.write("radius P12\n")
 
         file_time = file_base + "time.txt"
         with open(file_time, 'w') as f:
@@ -98,14 +98,14 @@ class dpsAnalysis:
             dsp_value = e1 + e2 + e3
         return dsp_value
 
-    def save_P123_dps_type(self, dsp_type, radius, P12, P13, P32):
+    def save_P123_dps_type(self, dsp_type, radius, P12):
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/dpsAnalysis/radius/data/P123/P_"
         file += dsp_type + ".txt"
         with open(file, 'a') as f:
             f.write(
-                str(radius)+" "+str(P12)+" "+str(P13)+" "+str(P32)+"\n")
+                str(radius)+" "+str(P12)+" "+"\n")
 
     def save_P123_time(self, radius, time):
         file = ""
@@ -148,7 +148,7 @@ class dpsAnalysis:
             print("-> save_P123_dps_type")
             for dsp_type in self.parSer.dsp_types:
 
-                dsp_value_tmp = [[], [], []]
+                dsp_value_tmp = [[], []]
                 for idx, e_tmp in enumerate(e):
                     e1, e2, e3 = e_tmp
                     dsp_value = self.calculo_dsp_type(dsp_type, e1, e2, e3)
@@ -157,26 +157,17 @@ class dpsAnalysis:
                         dsp_value_tmp[0].append(dsp_value)
                     elif self.Classification[idx] == 2:  # ground
                         dsp_value_tmp[1].append(dsp_value)
-                    elif self.Classification[idx] == 8:  # Model_keypoints
-                        dsp_value_tmp[2].append(dsp_value)
 
                 tree_mean = np.mean(dsp_value_tmp[0])
                 tree_std = np.std(dsp_value_tmp[0])
                 ground_mean = np.mean(dsp_value_tmp[1])
                 ground_std = np.std(dsp_value_tmp[1])
-                marcador_mean = np.mean(dsp_value_tmp[2])
-                marcador_std = np.std(dsp_value_tmp[2])
 
                 #Arbol - suelo
                 P12 = (
                     np.abs(tree_mean - ground_mean)) / (3*(tree_std + ground_std))
-                #Arbol - Marcador
-                P13 = (
-                    np.abs(tree_mean - marcador_mean)) / (3*(tree_std + marcador_std))
-                #Marcador - Suelo
-                P32 = (
-                    np.abs(marcador_mean - ground_mean)) / (3*(marcador_std + ground_std))
-                self.save_P123_dps_type(dsp_type, radius, P12, P13, P32)
+
+                self.save_P123_dps_type(dsp_type, radius, P12)
 
             e = None
             dsp_value_tmp = None
@@ -201,34 +192,20 @@ class dpsAnalysis:
 
         self.save_dsp_radius(radius)
 
-    def graph_P123_dps_type(self, dps_type, P12, P13, P32, radius):
+    def graph_P123_dps_type(self, dps_type, P12,radius):
         pwd_imagen = ""
         pwd_imagen += self.parSer.prefix
         pwd_imagen += "pointProyect/dpsAnalysis/radius/images/graphics_P123/"
 
         max_P12 = np.amax(P12)
-        max_P13 = np.amax(P13)
-        max_P32 = np.amax(P32)
 
         posMax_P12 = np.where(P12 == max_P12)
-        posMax_P13 = np.where(P13 == max_P13)
-        posMax_P32 = np.where(P32 == max_P32)
 
         plt.figure()
         plt.plot(radius, P12, 'C0', label="Arbol_suelo")
         plt.plot(
             radius[posMax_P12], P12[posMax_P12],
             'vC0', label="P(max): {0:.2f}".format(max_P12))
-
-        plt.plot(radius, P13, 'C1', label="Arbol_Marcador")
-        plt.plot(
-            radius[posMax_P13], P13[posMax_P13],
-            'vC1', label="P(max): {0:.2f}".format(max_P13))
-
-        plt.plot(radius, P32, 'C2', label="Marcador_Suelo")
-        plt.plot(
-            radius[posMax_P32], P32[posMax_P32],
-            'vC2', label="P(max): {0:.2f}".format(max_P32))
 
         plt.title(dps_type + "_vs_radius")
         plt.xlabel('radius')
@@ -253,51 +230,6 @@ class dpsAnalysis:
         plt.savefig(pwd_imagen + "time_vs_radius.png")
         plt.clf()
 
-    def graph_average_P123_dps_type(self, dps_type, P12, P13, P32, radius):
-        pwd_imagen = ""
-        pwd_imagen += self.parSer.prefix
-        pwd_imagen += "pointProyect/dpsAnalysis/radius/images/average_P123/"
-
-        average_P = (P12 + P13 + P32)/3
-        max_average = np.amax(average_P)
-        posMax_average = np.where(average_P == max_average)
-
-        plt.figure()
-        plt.plot(radius, average_P, "C0", label="average_P")
-        plt.plot(
-            radius[posMax_average], average_P[posMax_average],
-            'vC0', label="average(max): {0:.2f} \n radius: {1:.2f}".format(max_average, radius[posMax_average][0]))
-        plt.title("average_"+dps_type+"_vs_radius")
-        plt.xlabel('radius')
-        plt.ylabel('average_P')
-        plt.grid(True)
-        plt.legend()
-        plt.savefig(pwd_imagen + "average_"+dps_type+"_vs_radius.png")
-        plt.clf()
-
-        return average_P
-
-    def graph_selection_Radius(self, averages_P, radius):
-        pwd_imagen = ""
-        pwd_imagen += self.parSer.prefix
-        pwd_imagen += "pointProyect/dpsAnalysis/radius/images/selection_Radius/"
-
-        max_averages_P = np.amax(averages_P)
-        posMax_averages = np.where(averages_P == max_averages_P)
-
-        plt.figure()
-        plt.plot(radius, averages_P, "C0", label="averages_P")
-        plt.plot(
-            radius[posMax_averages], averages_P[posMax_averages],
-            'vC0', label="average(max): {0:.2f} \n radius: {1:.2f}".format(max_averages_P, radius[posMax_averages][0]))
-        plt.title("averages_P_vs_radius")
-        plt.xlabel('radius')
-        plt.ylabel('averages_P')
-        plt.grid(True)
-        plt.legend()
-        plt.savefig(pwd_imagen + "averages_P_vs_radius.png")
-        plt.clf()
-
     def graphics_P123(self):
         pwd_files = ""
         pwd_files += self.parSer.prefix
@@ -307,7 +239,6 @@ class dpsAnalysis:
         name_files.remove("data.txt")
         name_files.remove("P_time.txt")
 
-        list_averages_P = []
         print("")
         for name_file in name_files:
             data = pd.read_csv(pwd_files+name_file, sep=" ", header=0)
@@ -317,13 +248,10 @@ class dpsAnalysis:
 
             #Arbol - suelo
             P12 = np.array(data.P12)
-            #Arbol - Marcador
-            P13 = np.array(data.P13)
-            #Marcador - Suelo
-            P32 = np.array(data.P32)
 
             dps_type = name_file[:len(name_file)-4]
-            self.graph_P123_dps_type(dps_type, P12, P13, P32, radius)
+            self.graph_P123_dps_type(dps_type, P12, radius)
+            
             average_P_tmp = self.graph_average_P123_dps_type(
                 dps_type, P12, P13, P32, radius)
 
