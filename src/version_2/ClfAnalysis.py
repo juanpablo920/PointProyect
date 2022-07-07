@@ -607,7 +607,8 @@ if __name__ == '__main__':
         clf_analysis.read_data()
         clf_analysis.read_data_dsp()
         print("-"*10)
-        clf_analysis.KNeighbors()
+        clf_analysis.RandomForest()
+        print("-"*10)
         clf_analysis.save_clf_results()
     else:
         print("="*10)
