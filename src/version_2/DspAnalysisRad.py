@@ -104,8 +104,7 @@ class dpsAnalysis:
         file += "pointProyect/dpsAnalysis/radius/data/P123/P_"
         file += dsp_type + ".txt"
         with open(file, 'a') as f:
-            f.write(
-                str(radius)+" "+str(P12)+" "+"\n")
+            f.write(str(radius)+" "+str(P12)+"\n")
 
     def save_P123_time(self, radius, time):
         file = ""
