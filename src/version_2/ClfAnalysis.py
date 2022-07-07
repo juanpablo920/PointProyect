@@ -166,6 +166,7 @@ class clfAnalysis:
             f.write(linea+"\n")
 
     def save_clf_results(self):
+        print("save_clf_results")
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/data/results/"
