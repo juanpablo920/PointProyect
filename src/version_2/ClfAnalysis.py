@@ -310,6 +310,9 @@ class clfAnalysis:
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
 
+        print(type(pre))
+        print(pre)
+
         accuracy = accuracy_score(self.Classification_valid, pre)*100
         f1 = f1_score(self.Classification_valid, pre, average=None)*100
 
@@ -596,9 +599,9 @@ if __name__ == '__main__':
         clf_analysis.read_data_dsp()
         clf_analysis.setting_clf()
         print("-"*10)
-        clf_analysis.RandomForest()
-        # print("")
-        # clf_analysis.KNeighbors()
+        # clf_analysis.RandomForest()
+        print("")
+        clf_analysis.KNeighbors()
         # print("")
         # # clf_analysis.SVM()
         # print("")
