@@ -265,7 +265,7 @@ class dpsAnalysis:
         for name_file in name_files:
             data = pd.read_csv(pwd_files+name_file, sep=" ", header=0)
             print("--> ", name_file)
-
+            print(data)
             radius = np.array(data.radius)
 
             #Arbol - suelo
