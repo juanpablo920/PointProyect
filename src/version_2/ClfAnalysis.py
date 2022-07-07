@@ -132,16 +132,6 @@ class clfAnalysis:
         with open(file, 'w') as f:
             f.write("clf accuracy f1_2 f1_16\n")
 
-    # def setting_results(self):
-    #     print("setting_results")
-    #     file_base = ""
-    #     file_base += self.parSer.prefix
-    #     file_base += "pointProyect/data/results/"
-    #     file = file_base + "clf_" + self.parSer.data_file_valid
-
-    #     with open(file, 'w') as f:
-    #         f.write("X Y Z Classification\n")
-
     def save_dps(self, dsp_type, X, Y, Z, Classification, dsp_values):
         file = ""
         file += self.parSer.prefix
@@ -175,20 +165,19 @@ class clfAnalysis:
         with open(file, 'a') as f:
             f.write(linea+"\n")
 
-    # def save_results(self, X, Y, Z, Classification):
-    #     file_base = ""
-    #     file_base += self.parSer.prefix
-    #     file_base += "pointProyect/data/results/"
-    #     file = file_base + "clf_" + self.parSer.data_file_valid
+    def save_clf_results(self):
+        file = ""
+        file += self.parSer.prefix
+        file += "pointProyect/data/resuls/"
+        file += "clf_" + self.parSer.data_file_valid
 
-    #     linea = ""
-    #     linea += str(X)
-    #     linea += " " + str(Y)
-    #     linea += " " + str(Z)
-    #     linea += " " + str(Classification)
-
-    #     with open(file, 'a') as f:
-    #         f.write(linea+"\n")
+        with open(file, 'w') as f:
+            f.write("X Y Z Classification\n")
+            
+            for idx,XYZ in  enumerate(self.pcd_valid.points):
+                X, Y, Z = XYZ
+                
+                f.write(str(X)+" "+str(Y)+" "+str(Z)+" "+str(self.pre[idx])+"\n") 
 
     def calculo_valores_propios(self, matricesCov):
         val_propio_cov = np.linalg.eigvals(matricesCov)
@@ -279,9 +268,6 @@ class clfAnalysis:
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
         
-        print(type(pre))
-        print(pre)
-
         accuracy = accuracy_score(self.Classification_valid, pre)*100
         f1 = f1_score(self.Classification_valid, pre, average=None)*100
 
@@ -289,6 +275,7 @@ class clfAnalysis:
         print("-> F1: ", f1, "%")
 
         self.save_report_clf_type("RandomForest", accuracy, f1)
+        self.pre = pre
 
         # a = []
         # i = 1
@@ -310,9 +297,6 @@ class clfAnalysis:
         clf.fit(self.dsp_train, self.Classification_train)
         pre = clf.predict(self.dsp_valid)
 
-        print(type(pre))
-        print(pre)
-
         accuracy = accuracy_score(self.Classification_valid, pre)*100
         f1 = f1_score(self.Classification_valid, pre, average=None)*100
 
@@ -320,6 +304,7 @@ class clfAnalysis:
         print("-> F1: ", f1, "%")
 
         self.save_report_clf_type("KNeighbors", accuracy, f1)
+        self.pre = pre
 
         # pre = neigh.predict(test)
         # print("Accuracy: ", accuracy_score(te, pre)*100, "%")
@@ -341,6 +326,7 @@ class clfAnalysis:
         print("-> F1: ", f1, "%")
 
         self.save_report_clf_type("SVM", accuracy, f1)
+        self.pre = pre
 
     def Gaussiano(self):
         print("Gaussiano")
@@ -356,6 +342,7 @@ class clfAnalysis:
         print("-> F1: ", f1, "%")
 
         self.save_report_clf_type("Gaussiano", accuracy, f1)
+        self.pre = pre
 
     def Rocchio(self):
         print("Rocchio")
@@ -371,6 +358,7 @@ class clfAnalysis:
         print("-> F1: ", f1, "%")
 
         self.save_report_clf_type("Rocchio", accuracy, f1)
+        self.pre = pre
 
     def DecisionTree(self):
         print("DecisionTree")
@@ -387,6 +375,7 @@ class clfAnalysis:
         print("-> F1: ", f1, "%")
 
         self.save_report_clf_type("DecisionTree", accuracy, f1)
+        self.pre = pre
 
         # p_train = 0.8  # Porcentaje de particion
         # trainc, testc, trc, tec = train_test_split(
@@ -599,19 +588,26 @@ if __name__ == '__main__':
         clf_analysis.read_data_dsp()
         clf_analysis.setting_clf()
         print("-"*10)
-        # clf_analysis.RandomForest()
+        clf_analysis.RandomForest()
         print("")
         clf_analysis.KNeighbors()
-        # print("")
-        # # clf_analysis.SVM()
-        # print("")
-        # clf_analysis.Gaussiano()
-        # print("")
-        # clf_analysis.Rocchio()
-        # print("")
-        # clf_analysis.DecisionTree()
+        print("")
+        # clf_analysis.SVM()
+        print("")
+        clf_analysis.Gaussiano()
+        print("")
+        clf_analysis.Rocchio()
+        print("")
+        clf_analysis.DecisionTree()
     elif opcion == "3":
-        pass
+        print("="*10)
+        print("generar graficas clf")
+        print("")
+        clf_analysis.read_data()
+        clf_analysis.read_data_dsp()
+        print("-"*10)
+        clf_analysis.KNeighbors()
+        clf_analysis.save_clf_results()
     else:
         print("="*10)
         print("no es una opcion '{opcion}'")
