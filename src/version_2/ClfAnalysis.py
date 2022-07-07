@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 import time as tm
-from version_2.params import ParamServer
+from params import ParamServer
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
@@ -130,7 +130,7 @@ class clfAnalysis:
         file = file_base + "clf_report.txt"
 
         with open(file, 'w') as f:
-            f.write("clf accuracy f1_2 f1_8 f1_16\n")
+            f.write("clf accuracy f1_2 f1_16\n")
 
     # def setting_results(self):
     #     print("setting_results")
@@ -171,7 +171,6 @@ class clfAnalysis:
         linea += " " + str(accuracy)
         linea += " " + str(f1[0])
         linea += " " + str(f1[1])
-        linea += " " + str(f1[2])
 
         with open(file, 'a') as f:
             f.write(linea+"\n")
