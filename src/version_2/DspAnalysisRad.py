@@ -284,6 +284,7 @@ class dpsAnalysis:
         self.graph_time_P(time, radius)
 
         averages_P = np.sum(list_averages_P, axis=0)/len(list_averages_P)
+        print(averages_P)
         self.graph_selection_Radius(averages_P, radius)
 
     def graph_gaussiana_dps_type(self, dps_type, dsp_tree, dsp_ground):
