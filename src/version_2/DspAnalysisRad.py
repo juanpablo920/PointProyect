@@ -282,7 +282,7 @@ class dpsAnalysis:
         radius = np.array(times.radius)
         time = np.array(times.time)
         self.graph_time_P(time, radius)
-
+        print(list_averages_P)
         averages_P = np.sum(list_averages_P, axis=0)/len(list_averages_P)
         print(averages_P)
         self.graph_selection_Radius(averages_P, radius)
