@@ -168,7 +168,7 @@ class clfAnalysis:
     def save_clf_results(self):
         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/data/resuls/"
+        file += "pointProyect/data/results/"
         file += "clf_" + self.parSer.data_file_valid
 
         with open(file, 'w') as f:
