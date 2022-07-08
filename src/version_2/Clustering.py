@@ -4,6 +4,8 @@ import open3d as o3d
 import pandas as pd
 import matplotlib.pyplot as plt
 import time as tm
+
+from sklearn import cluster
 from params import ParamServer
 from scipy.stats import norm
 from sklearn.metrics import silhouette_score
@@ -41,3 +43,6 @@ class clustering:
         plt.ylabel('Puntaje de la silueta')
         plt.title('Metodo de la Silueta')
         plt.show
+
+if __name__ == '__main__':
+    Cluster = clustering()
