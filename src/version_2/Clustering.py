@@ -38,8 +38,8 @@ class clustering:
         for k in range(2, 20):
             print("K: ",k)
             kmeans = KMeans(n_clusters = k).fit(self.pcd)
-            print(dir(kmeans))
             labels = kmeans.labels_
+            print(labels)
             silueta.append(silhouette_score(self.pcd, labels, metric = 'euclidean'))
             print(silueta)
            
