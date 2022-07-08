@@ -42,7 +42,7 @@ class clustering:
         # plt.scatter(x1, x2)
         # plt.show()
 
-        X = np.array(list(zip(x1, x2))).reshape(len(x1),2)
+        #X = np.array(list(zip(x1, x2))).reshape(len(x1),2)
         
         print("cluster")
         silueta = []
