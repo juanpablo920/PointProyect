@@ -30,15 +30,19 @@ class clustering:
         self.pcd = data.to_numpy()
 
         print("datos:", self.pcd.shape)
+        print(self.pcd)
 
     def cluster(self):
+        print("cluster")
         silueta = []
         for k in range(2, 20):
-            print(k)
+            print("K: ",k)
             kmeans = KMeans(n_clusters = k).fit(self.pcd)
+            print(dir(kmeans))
             labels = kmeans.labels_
             silueta.append(silhouette_score(self.pcd, labels, metric = 'euclidean'))
-            print(k)
+            print(silueta)
+           
         plt.plot(K, silueta, 'bx-')
         plt.xlabel('Clústeres')
         plt.ylabel('Puntaje de la silueta')
