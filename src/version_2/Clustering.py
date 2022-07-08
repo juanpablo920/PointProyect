@@ -43,16 +43,15 @@ class clustering:
         plt.show()
 
         X = np.array(list(zip(x1, x2))).reshape(len(x1),2)
-        print(X)
-        print(self.pcd)
+        
         print("cluster")
         silueta = []
         for k in range(2, 11):
             print("K: ",k)
-            kmeans = KMeans(n_clusters = k).fit(X)
+            kmeans = KMeans(n_clusters = k).fit(self.pcd)
             labels = kmeans.labels_
             print(labels)
-            silueta.append(silhouette_score(X, labels, metric = 'euclidean'))
+            silueta.append(silhouette_score(self.pcd, labels, metric = 'euclidean'))
             print(silueta)
            
         plt.plot(range(2, 11), silueta, 'bx-')
