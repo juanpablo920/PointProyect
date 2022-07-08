@@ -38,6 +38,7 @@ class clustering:
             kmeans = KMeans(n_clusters = k).fit(self.pcd)
             labels = kmeans.labels_
             silueta.append(silhouette_score(self.pcd, labels, metric = 'euclidean'))
+            print(k)
         plt.plot(K, silueta, 'bx-')
         plt.xlabel('Clústeres')
         plt.ylabel('Puntaje de la silueta')
