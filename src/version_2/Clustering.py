@@ -43,6 +43,8 @@ class clustering:
         plt.show()
 
         X = np.array(list(zip(x1, x2))).reshape(len(x1),2)
+        print(X)
+        print(self.pcd)
         print("cluster")
         silueta = []
         for k in range(2, 11):
