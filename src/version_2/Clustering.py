@@ -35,6 +35,7 @@ class clustering:
         silueta = []
         K = range(2, 20)
         for k in K:
+            print(k)
             kmeans = KMeans(n_clusters = k).fit(self.pcd)
             labels = kmeans.labels_
             silueta.append(silhouette_score(self.pcd, labels, metric = 'euclidean'))
