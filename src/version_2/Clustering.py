@@ -34,7 +34,7 @@ class clustering:
     def cluster(self):
 
         x1 =np.array([3, 1, 1, 2, 1, 6, 6, 6, 5, 6, 7, 8, 9, 8, 9, 9, 8])
-        x2 = p.array([5, 4, 5, 6, 5, 8, 6, 7, 6, 7, 1, 2, 1, 2, 3, 2, 3])
+        x2 =np.array([5, 4, 5, 6, 5, 8, 6, 7, 6, 7, 1, 2, 1, 2, 3, 2, 3])
         plt.plot()
         plt.xlim([0,10])
         plt.ylim([0,10])
