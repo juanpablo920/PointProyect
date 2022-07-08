@@ -53,7 +53,7 @@ class clustering:
             silueta.append(silhouette_score(X, labels, metric = 'euclidean'))
             print(silueta)
            
-        plt.plot(K, silueta, 'bx-')
+        plt.plot(range(2, 11), silueta, 'bx-')
         plt.xlabel('Clústeres')
         plt.ylabel('Puntaje de la silueta')
         plt.title('Metodo de la Silueta')
