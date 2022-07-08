@@ -57,7 +57,7 @@ class clustering:
         plt.xlabel('Clústeres')
         plt.ylabel('Puntaje de la silueta')
         plt.title('Metodo de la Silueta')
-        plt.show
+        plt.show()
 
 if __name__ == '__main__':
     Cluster = clustering()
