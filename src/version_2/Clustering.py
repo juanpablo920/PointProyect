@@ -63,5 +63,5 @@ class clustering:
 
 if __name__ == '__main__':
     Cluster = clustering()
-    # Cluster.read_data()
+    Cluster.read_data()
     Cluster.cluster()
