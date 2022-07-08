@@ -30,14 +30,24 @@ class clustering:
         self.pcd = data.to_numpy()
 
         print("datos:", self.pcd.shape)
-        print(self.pcd)
 
     def cluster(self):
+
+        x1 =np.array([3, 1, 1, 2, 1, 6, 6, 6, 5, 6, 7, 8, 9, 8, 9, 9, 8])
+        x2 = p.array([5, 4, 5, 6, 5, 8, 6, 7, 6, 7, 1, 2, 1, 2, 3, 2, 3])
+        plt.plot()
+        plt.xlim([0,10])
+        plt.ylim([0,10])
+        plt.title( 'Conjunto de Datos')
+        plt.scatter(x1, x2)
+        plt.show()
+
+        X = np.array(list(zip(x1, x2))).reshape(len(x1),2)
         print("cluster")
         silueta = []
         for k in range(2, 20):
             print("K: ",k)
-            kmeans = KMeans(n_clusters = k).fit(self.pcd)
+            kmeans = KMeans(n_clusters = k).fit(X)
             labels = kmeans.labels_
             print(labels)
             silueta.append(silhouette_score(self.pcd, labels, metric = 'euclidean'))
@@ -51,5 +61,5 @@ class clustering:
 
 if __name__ == '__main__':
     Cluster = clustering()
-    Cluster.read_data()
+    # Cluster.read_data()
     Cluster.cluster()
