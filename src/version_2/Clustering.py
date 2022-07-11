@@ -62,7 +62,7 @@ class clustering:
         aa = list(range(2, 49))
 
         print(len(silueta))
-        print(aa)
+        print(len(aa))
 
         plt.plot(aa, silueta, 'bx-')
         plt.xlabel('Clústeres')
