@@ -61,7 +61,7 @@ class clustering:
 
         print(len(silueta))
 
-        plt.plot(range(2, 50), silueta, 'bx-')
+        plt.plot(range(2, 49), silueta, 'bx-')
         plt.xlabel('Clústeres')
         plt.ylabel('Puntaje de la silueta')
         plt.title('Metodo de la Silueta')
