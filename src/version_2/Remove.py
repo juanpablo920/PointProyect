@@ -20,12 +20,12 @@ class removeGround:
         file += "pointProyect/data/training/"
         file += self.parSer.data_file_train
 
-        data1 = pd.read_csv(file, sep=" ", header=0)
-        self.Classification = np.array(data1.Classification)
-        print(data1)
+        data = pd.read_csv(file, sep=" ", header=0)
+        self.Classification = np.array(data.Classification)
+        print(data)
         
-        data1 = data1[data1['Classification'] == 2].index
-        data = data1.drop
+        indices = data[data['Classification'] == 2].index
+        data = data.drop(indices)
         print(data)
 
         # self.pcd = o3d.geometry.PointCloud()
