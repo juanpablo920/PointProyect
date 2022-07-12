@@ -33,13 +33,20 @@ class removeGround:
 
         #print("datos:", len(self.pcd.points))
     
-    def save_dps_type(self, X, Y, Z):
-        file = ""
+    def save_dps_type(self, X, Y, Z, Classification):
+         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/dpsAnalysis"
-        file += removeGround + ".txt"
+        file += "pointProyect/"
+        file += RemoveGround + ".txt"
+        
+        linea = ""
+        linea += str(X)
+        linea += " " + str(Y)
+        linea += " " + str(Z)
+        linea += " " + str(Classification)
+
         with open(file, 'a') as f:
-            f.write(str(X)+" "+str(Y)+" "+str(Z)+"\n")
+            f.write(linea+"\n")
 
 if __name__ == '__main__':
     rmGround = removeGround()
