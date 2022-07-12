@@ -30,6 +30,8 @@ class clustering:
         indices = data[data['Classification'] == 2].index
         data = data.drop(indices)
 
+        print("Hola")
+
         self.pcd = data.to_numpy()
         print(self.pcd)
 
