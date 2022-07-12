@@ -23,7 +23,7 @@ class removeGround:
         data = pd.read_csv(file, sep=" ", header=0)
         self.Classification = np.array(data.Classification)
         print(data)
-        data = data.drop(['Classification'] == 3, axis=0)
+        data = data.drop(['Classification'] == 2, axis=0)
 
         self.pcd = o3d.geometry.PointCloud()
         self.pcd.points = o3d.utility.Vector3dVector(data.to_numpy())
