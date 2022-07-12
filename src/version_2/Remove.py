@@ -26,11 +26,12 @@ class removeGround:
         
         data1 = data1[data1['Classification'] == 2].index
         data = data1.drop
+        print(data)
 
-        self.pcd = o3d.geometry.PointCloud()
-        self.pcd.points = o3d.utility.Vector3dVector(data.to_numpy())
+        # self.pcd = o3d.geometry.PointCloud()
+        # self.pcd.points = o3d.utility.Vector3dVector(data.to_numpy())
 
-        print("datos:", len(self.pcd.points))
+        #print("datos:", len(self.pcd.points))
     
     def save_dps_type(self, X, Y, Z):
         file = ""
