@@ -21,8 +21,8 @@ class clustering:
         print("read_data")
         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/data/validation/"
-        file += self.parSer.data_file_valid
+        file += "pointProyect/data/training/"
+        file += self.parSer.data_file_train
 
         data = pd.read_csv(file, sep=" ", header=0)
         self.Classification = np.array(data.Classification)
