@@ -193,6 +193,7 @@ class clfAnalysis:
         file_base += "pointProyect/clfAnalysis/data/models_clf/"
 
         file = file_base + clf_type + ".pkl"
+        print(file)
         joblib.dump(clf,file)
 
     def save_report_clf_type(self, clf, accuracy, f1):
@@ -314,17 +315,17 @@ class clfAnalysis:
         print("generate_dsp_valid")
         print(">"*10)
 
-        print("RandomForest")
-        clf = RandomForestClassifier(
-            max_depth=len(self.parSer.dsp_types),
-            random_state=0)
-        clf.fit(self.dsp_train, self.Classification_train)
-        self.save_model_clf_type(clf,"RandomForest")
+        # print("RandomForest")
+        # clf = RandomForestClassifier(
+        #     max_depth=len(self.parSer.dsp_types),
+        #     random_state=0)
+        # clf.fit(self.dsp_train, self.Classification_train)
+        # self.save_model_clf_type(clf,"RandomForest")
         
-        print("KNeighbors")
-        clf = KNeighborsClassifier(n_neighbors=len(self.parSer.dsp_types))
-        clf.fit(self.dsp_train, self.Classification_train)
-        self.save_model_clf_type(clf, "KNeighbors")
+        # print("KNeighbors")
+        # clf = KNeighborsClassifier(n_neighbors=len(self.parSer.dsp_types))
+        # clf.fit(self.dsp_train, self.Classification_train)
+        # self.save_model_clf_type(clf, "KNeighbors")
 
         # print("SVM")
         # clf = svm.SVC()
