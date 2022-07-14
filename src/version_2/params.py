@@ -11,7 +11,7 @@ class ParamServer:
 
         self.dsp_types = ["L", "P", "S", "O", "A", "E", "C"]  # Sum
 
-        self.data_file_train = "Libano_coffee_etiquetado_training.txt"
+        self.data_file_train = "Libano_coffee_etiquetado_training_34arboles.txt"
         self.data_file_valid = "PCD_NIR_validation_4M_Arbol_suelo.txt"
 
         self.clf_P_train = 0.7  # Porcentaje de particion
