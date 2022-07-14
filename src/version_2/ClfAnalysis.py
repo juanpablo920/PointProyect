@@ -342,50 +342,50 @@ class clfAnalysis:
         clf.fit(self.dsp_train, self.Classification_train)
         self.save_model_clf_type("Rocchio",clf)
 
-        print("DecisionTree")
-        clf = DecisionTreeClassifier(random_state=len(self.parSer.dsp_types))
-        clf.fit(self.dsp_train, self.Classification_train)
-        self.save_model_clf_type("DecisionTree",clf)
+        # print("DecisionTree")
+        # clf = DecisionTreeClassifier(random_state=len(self.parSer.dsp_types))
+        # clf.fit(self.dsp_train, self.Classification_train)
+        # self.save_model_clf_type("DecisionTree",clf)
 
     def generate_report_clf(self):
         print("generate_report_clf")
         print(">"*10)
 
-        print("RandomForest")
-        clf = self.read_model_clf_type("RandomForest")
-        pre = clf.predict(self.dsp_valid)
+        # print("RandomForest")
+        # clf = self.read_model_clf_type("RandomForest")
+        # pre = clf.predict(self.dsp_valid)
 
-        accuracy = accuracy_score(self.Classification_valid, pre)*100
-        f1 = f1_score(self.Classification_valid, pre, average=None)*100
+        # accuracy = accuracy_score(self.Classification_valid, pre)*100
+        # f1 = f1_score(self.Classification_valid, pre, average=None)*100
 
-        print("-> Accuracy: ", accuracy, "%")
-        print("-> F1: ", f1, "%")
+        # print("-> Accuracy: ", accuracy, "%")
+        # print("-> F1: ", f1, "%")
 
-        self.save_clf_report_type("RandomForest", accuracy, f1)
+        # self.save_clf_report_type("RandomForest", accuracy, f1)
 
-        print("KNeighbors")
-        clf = self.read_model_clf_type("KNeighbors")
-        pre = clf.predict(self.dsp_valid)
+        # print("KNeighbors")
+        # clf = self.read_model_clf_type("KNeighbors")
+        # pre = clf.predict(self.dsp_valid)
 
-        accuracy = accuracy_score(self.Classification_valid, pre)*100
-        f1 = f1_score(self.Classification_valid, pre, average=None)*100
+        # accuracy = accuracy_score(self.Classification_valid, pre)*100
+        # f1 = f1_score(self.Classification_valid, pre, average=None)*100
 
-        print("-> Accuracy: ", accuracy, "%")
-        print("-> F1: ", f1, "%")
+        # print("-> Accuracy: ", accuracy, "%")
+        # print("-> F1: ", f1, "%")
 
-        self.save_report_clf_type("KNeighbors", accuracy, f1)
+        # self.save_report_clf_type("KNeighbors", accuracy, f1)
 
-        print("SVM")
-        clf = self.read_model_clf_type("SVM")
-        pre = clf.predict(self.dsp_valid)
+        # print("SVM")
+        # clf = self.read_model_clf_type("SVM")
+        # pre = clf.predict(self.dsp_valid)
 
-        accuracy = accuracy_score(self.Classification_valid, pre)*100
-        f1 = f1_score(self.Classification_valid, pre, average=None)*100
+        # accuracy = accuracy_score(self.Classification_valid, pre)*100
+        # f1 = f1_score(self.Classification_valid, pre, average=None)*100
 
-        print("-> Accuracy: ", accuracy, "%")
-        print("-> F1: ", f1, "%")
+        # print("-> Accuracy: ", accuracy, "%")
+        # print("-> F1: ", f1, "%")
 
-        self.save_report_clf_type("SVM", accuracy, f1)
+        # self.save_report_clf_type("SVM", accuracy, f1)
 
         print("Gaussiano")
         clf = self.read_model_clf_type("Gaussiano")
@@ -411,17 +411,17 @@ class clfAnalysis:
 
         self.save_report_clf_type("Rocchio", accuracy, f1)
 
-        print("DecisionTree")
-        clf = self.read_model_clf_type("DecisionTree")
-        pre = clf.predict(self.dsp_valid)
+        # print("DecisionTree")
+        # clf = self.read_model_clf_type("DecisionTree")
+        # pre = clf.predict(self.dsp_valid)
 
-        accuracy = accuracy_score(self.Classification_valid, pre)*100
-        f1 = f1_score(self.Classification_valid, pre, average=None)*100
+        # accuracy = accuracy_score(self.Classification_valid, pre)*100
+        # f1 = f1_score(self.Classification_valid, pre, average=None)*100
 
-        print("-> Accuracy: ", accuracy, "%")
-        print("-> F1: ", f1, "%")
+        # print("-> Accuracy: ", accuracy, "%")
+        # print("-> F1: ", f1, "%")
 
-        self.save_report_clf_type("DecisionTree", accuracy, f1)
+        # self.save_report_clf_type("DecisionTree", accuracy, f1)
 
 if __name__ == '__main__':
     clf_analysis = clfAnalysis()
