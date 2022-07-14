@@ -192,8 +192,11 @@ class clfAnalysis:
         file_base += self.parSer.prefix
         file_base += "pointProyect/clfAnalysis/data/models_clf/"
 
+        print(file_base)
+        print(clf_type)
+
         file = file_base + clf_type + ".pkl"
-        print(file)
+        
         joblib.dump(clf,file)
 
     def save_report_clf_type(self, clf, accuracy, f1):
@@ -320,32 +323,32 @@ class clfAnalysis:
         #     max_depth=len(self.parSer.dsp_types),
         #     random_state=0)
         # clf.fit(self.dsp_train, self.Classification_train)
-        # self.save_model_clf_type(clf,"RandomForest")
+        # self.save_model_clf_type("RandomForest",clf)
         
         # print("KNeighbors")
         # clf = KNeighborsClassifier(n_neighbors=len(self.parSer.dsp_types))
         # clf.fit(self.dsp_train, self.Classification_train)
-        # self.save_model_clf_type(clf, "KNeighbors")
+        # self.save_model_clf_type("KNeighbors",clf)
 
         # print("SVM")
         # clf = svm.SVC()
         # clf.fit(self.dsp_train, self.Classification_train)
-        # self.save_model_clf_type(clf, "SVM")
+        # self.save_model_clf_type("SVM",clf)
 
         print("Gaussiano")
         clf = GaussianNB()
         clf.fit(self.dsp_train, self.Classification_train)
-        self.save_model_clf_type(clf, "Gaussiano")
+        self.save_model_clf_type("Gaussiano",clf)
 
         print("Rocchio")
         clf = NearestCentroid()
         clf.fit(self.dsp_train, self.Classification_train)
-        self.save_model_clf_type(clf, "Rocchio")
+        self.save_model_clf_type("Rocchio",clf)
 
         print("DecisionTree")
         clf = DecisionTreeClassifier(random_state=len(self.parSer.dsp_types))
         clf.fit(self.dsp_train, self.Classification_train)
-        self.save_model_clf_type(clf, "DecisionTree")
+        self.save_model_clf_type("DecisionTree",clf)
 
     def generate_report_clf(self):
         print("generate_report_clf")
