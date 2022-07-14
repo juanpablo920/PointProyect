@@ -33,17 +33,14 @@ class clfAnalysis:
     def __init__(self):
         self.parSer = ParamServer()
 
-    def read_data(self):
-        print("read_data")
+    def read_data_train(self):
+        print("read_data_train")
         file_base = ""
         file_base += self.parSer.prefix
         file_base += "pointProyect/data/"
 
         file_train = file_base + "training/"
         file_train += self.parSer.data_file_train
-
-        file_valid = file_base + "validation/"
-        file_valid += self.parSer.data_file_valid
 
         # train
         data = pd.read_csv(file_train, sep=" ", header=0)
@@ -55,6 +52,15 @@ class clfAnalysis:
 
         print("-> datos_train:", len(self.pcd_train.points))
 
+    def read_data_valid(self):
+        print("read_data")
+        file_base = ""
+        file_base += self.parSer.prefix
+        file_base += "pointProyect/data/"
+
+        file_valid = file_base + "validation/"
+        file_valid += self.parSer.data_file_valid
+
         # valid
         data = pd.read_csv(file_valid, sep=" ", header=0)
         self.Classification_valid = np.array(data.Classification, dtype=int)
@@ -65,15 +71,14 @@ class clfAnalysis:
 
         print("-> datos_valid:", len(self.pcd_valid.points))
 
-    def read_data_dsp(self):
-        print("read_data_dsp")
+    def read_data_dsp_train(self):
+        print("read_data_dsp_train")
 
         file_base = ""
         file_base += self.parSer.prefix
-        file_base += "pointProyect/clfAnalysis/data/"
+        file_base += "pointProyect/clfAnalysis/data/dsp/"
 
         file_train = file_base + "dsp_train.txt"
-        file_valid = file_base + "dsp_valid.txt"
 
         # train
         data = pd.read_csv(file_train, sep=" ", header=0)
@@ -89,6 +94,15 @@ class clfAnalysis:
         print("-> Classification_train:", len(self.Classification_train))
         print("-> dsp_train:", self.dsp_train.shape)
 
+    def read_data_dsp_valid(self):
+        print("read_data_dsp_valid")
+
+        file_base = ""
+        file_base += self.parSer.prefix
+        file_base += "pointProyect/clfAnalysis/data/dsp/"
+
+        file_valid = file_base + "dsp_valid.txt"
+
         # valid
         data = pd.read_csv(file_valid, sep=" ", header=0)
         data = data.drop(['X'], axis=1)
@@ -103,14 +117,23 @@ class clfAnalysis:
         print("-> datos_Classification_valid:", len(self.Classification_valid))
         print("-> dsp_valid:", self.dsp_valid.shape)
 
-    def setting_dsp(self):
-        print("setting_dsp")
+    def read_model_clf_type(self, clf_type):
         file_base = ""
         file_base += self.parSer.prefix
-        file_base += "pointProyect/clfAnalysis/data/"
+        file_base += "pointProyect/clfAnalysis/data/models_clf/"
+
+        file = file_base + clf_type + ".pkl"
+
+        clf = joblib.load(file)
+        return clf
+
+    def setting_dsp_train(self):
+        print("setting_dsp_train")
+        file_base = ""
+        file_base += self.parSer.prefix
+        file_base += "pointProyect/clfAnalysis/data/dsp/"
 
         file_train = file_base + "dsp_train.txt"
-        file_valid = file_base + "dsp_valid.txt"
 
         encabezado = ""
         encabezado += "X Y Z Classification"
@@ -120,15 +143,28 @@ class clfAnalysis:
         with open(file_train, 'w') as f:
             f.write(encabezado+"\n")
 
+    def setting_dsp_valid(self):
+        print("setting_dsp_valid")
+        file_base = ""
+        file_base += self.parSer.prefix
+        file_base += "pointProyect/clfAnalysis/data/dsp/"
+
+        file_valid = file_base + "dsp_valid.txt"
+
+        encabezado = ""
+        encabezado += "X Y Z Classification"
+        for dsp_type in self.parSer.dsp_types:
+            encabezado += " " + dsp_type
+
         with open(file_valid, 'w') as f:
             f.write(encabezado+"\n")
 
-    def setting_clf(self):
-        print("setting_clf")
+    def setting_report_clf(self):
+        print("setting_report_clf")
         file_base = ""
         file_base += self.parSer.prefix
-        file_base += "pointProyect/clfAnalysis/data/"
-        file = file_base + "clf_report.txt"
+        file_base += "pointProyect/clfAnalysis/data/models_clf/"
+        file = file_base + "report_clf.txt"
 
         with open(file, 'w') as f:
             f.write("clf accuracy f1_2 f1_16\n")
@@ -136,7 +172,7 @@ class clfAnalysis:
     def save_dps(self, dsp_type, X, Y, Z, Classification, dsp_values):
         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/clfAnalysis/data/"
+        file += "pointProyect/clfAnalysis/data/dsp/"
         file += dsp_type + ".txt"
 
         linea = ""
@@ -151,11 +187,19 @@ class clfAnalysis:
         with open(file, 'a') as f:
             f.write(linea+"\n")
 
+    def save_model_clf_type(self,clf_type,clf):
+        file_base = ""
+        file_base += self.parSer.prefix
+        file_base += "pointProyect/clfAnalysis/data/models_clf/"
+
+        file = file_base + clf_type + ".pkl"
+        joblib.dump(clf,file)
+
     def save_report_clf_type(self, clf, accuracy, f1):
         file_base = ""
         file_base += self.parSer.prefix
-        file_base += "pointProyect/clfAnalysis/data/"
-        file = file_base + "clf_report.txt"
+        file_base += "pointProyect/clfAnalysis/data/models_clf/"
+        file = file_base + "report_clf.txt"
 
         linea = ""
         linea += str(clf)
@@ -175,11 +219,10 @@ class clfAnalysis:
 
         with open(file, 'w') as f:
             f.write("X Y Z Classification\n")
-            
-            for idx,XYZ in  enumerate(self.pcd_valid.points):
+            for idx, XYZ in enumerate(self.pcd_valid.points):
                 X, Y, Z = XYZ
-                
-                f.write(str(X)+" "+str(Y)+" "+str(Z)+" "+str(self.pre[idx])+"\n") 
+                f.write(str(X)+" "+str(Y)+" "+str(Z) +
+                        " "+str(self.pre[idx])+"\n")
 
     def calculo_valores_propios(self, matricesCov):
         val_propio_cov = np.linalg.eigvals(matricesCov)
@@ -220,15 +263,12 @@ class clfAnalysis:
             dsp_value = e1 + e2 + e3
         return dsp_value
 
-    def generate_dsp(self, radius):
-        print("generate_dsp")
+    def generate_dsp_train(self, radius):
+        print("generate_dsp_train")
         print(">"*10)
         print("-> radius: ", radius)
         print("-> calculo de matrices de covarianza")
         self.pcd_train.estimate_covariances(
-            search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
-
-        self.pcd_valid.estimate_covariances(
             search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
 
         print("-> save_dps_train")
@@ -246,6 +286,15 @@ class clfAnalysis:
             self.save_dps("dsp_train", X, Y, Z,
                           Classification_tmp, dsp_values_tmp)
 
+    def generate_dsp_valid(self, radius):
+        print("generate_dsp_valid")
+        print(">"*10)
+        print("-> radius: ", radius)
+        print("-> calculo de matrices de covarianza")
+
+        self.pcd_valid.estimate_covariances(
+            search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
+
         print("-> save_dps_valid")
         for idx, matricesCov_tmp in enumerate(self.pcd_valid.covariances):
             X, Y, Z = self.pcd_valid.points[idx]
@@ -261,42 +310,60 @@ class clfAnalysis:
             self.save_dps("dsp_valid", X, Y, Z,
                           Classification_tmp, dsp_values_tmp)
 
-    def RandomForest(self):
+    def generate_clf_models(self):
+        print("generate_dsp_valid")
+        print(">"*10)
+
         print("RandomForest")
         clf = RandomForestClassifier(
             max_depth=len(self.parSer.dsp_types),
             random_state=0)
-
         clf.fit(self.dsp_train, self.Classification_train)
-        pre = clf.predict(self.dsp_valid)
+        self.save_model_clf_type(clf,"RandomForest")
         
+        print("KNeighbors")
+        clf = KNeighborsClassifier(n_neighbors=len(self.parSer.dsp_types))
+        clf.fit(self.dsp_train, self.Classification_train)
+        self.save_model_clf_type(clf, "KNeighbors")
+
+        # print("SVM")
+        # clf = svm.SVC()
+        # clf.fit(self.dsp_train, self.Classification_train)
+        # self.save_model_clf_type(clf, "SVM")
+
+        print("Gaussiano")
+        clf = GaussianNB()
+        clf.fit(self.dsp_train, self.Classification_train)
+        self.save_model_clf_type(clf, "Gaussiano")
+
+        print("Rocchio")
+        clf = NearestCentroid()
+        clf.fit(self.dsp_train, self.Classification_train)
+        self.save_model_clf_type(clf, "Rocchio")
+
+        print("DecisionTree")
+        clf = DecisionTreeClassifier(random_state=len(self.parSer.dsp_types))
+        clf.fit(self.dsp_train, self.Classification_train)
+        self.save_model_clf_type(clf, "DecisionTree")
+
+    def generate_report_clf(self):
+        print("generate_report_clf")
+        print(">"*10)
+
+        print("RandomForest")
+        clf = self.read_model_clf_type("RandomForest")
+        pre = clf.predict(self.dsp_valid)
+
         accuracy = accuracy_score(self.Classification_valid, pre)*100
         f1 = f1_score(self.Classification_valid, pre, average=None)*100
 
         print("-> Accuracy: ", accuracy, "%")
         print("-> F1: ", f1, "%")
 
-        self.save_report_clf_type("RandomForest", accuracy, f1)
-        self.pre = pre
+        self.save_clf_report_type("RandomForest", accuracy, f1)
 
-        # a = []
-        # i = 1
-        # while(i < 50):
-        #     clf = RandomForestClassifier(max_depth=i, random_state=0)
-        #     clf.fit(train, tr)
-        #     pre = clf.predict(adjust)
-        #     a.append(accuracy_score(ad, pre)*100)
-        #     print(i)
-        #     i = i+1
-        # plt.plot(a)
-        # plt.show()
-
-    def KNeighbors(self):
         print("KNeighbors")
-        clf = KNeighborsClassifier(
-            n_neighbors=len(self.parSer.dsp_types))
-
-        clf.fit(self.dsp_train, self.Classification_train)
+        clf = self.read_model_clf_type("KNeighbors")
         pre = clf.predict(self.dsp_valid)
 
         accuracy = accuracy_score(self.Classification_valid, pre)*100
@@ -306,19 +373,9 @@ class clfAnalysis:
         print("-> F1: ", f1, "%")
 
         self.save_report_clf_type("KNeighbors", accuracy, f1)
-        self.pre = pre
 
-        # pre = neigh.predict(test)
-        # print("Accuracy: ", accuracy_score(te, pre)*100, "%")
-        # print("F1: ", f1_score(te, pre, average=None)*100, "%")
-        # a2 = accuracy_score(te, pre)*100
-        # b2 = f1_score(te, pre, average=None)*100
-
-    def SVM(self):
         print("SVM")
-        clf = svm.SVC()
-
-        clf.fit(self.dsp_train, self.Classification_train)
+        clf = self.read_model_clf_type("SVM")
         pre = clf.predict(self.dsp_valid)
 
         accuracy = accuracy_score(self.Classification_valid, pre)*100
@@ -328,13 +385,9 @@ class clfAnalysis:
         print("-> F1: ", f1, "%")
 
         self.save_report_clf_type("SVM", accuracy, f1)
-        self.pre = pre
 
-    def Gaussiano(self):
         print("Gaussiano")
-        clf = GaussianNB()
-
-        clf.fit(self.dsp_train, self.Classification_train)
+        clf = self.read_model_clf_type("Gaussiano")
         pre = clf.predict(self.dsp_valid)
 
         accuracy = accuracy_score(self.Classification_valid, pre)*100
@@ -344,13 +397,9 @@ class clfAnalysis:
         print("-> F1: ", f1, "%")
 
         self.save_report_clf_type("Gaussiano", accuracy, f1)
-        self.pre = pre
 
-    def Rocchio(self):
         print("Rocchio")
-        clf = NearestCentroid()
-
-        clf.fit(self.dsp_train, self.Classification_train)
+        clf = self.read_model_clf_type("Rocchio")
         pre = clf.predict(self.dsp_valid)
 
         accuracy = accuracy_score(self.Classification_valid, pre)*100
@@ -360,14 +409,9 @@ class clfAnalysis:
         print("-> F1: ", f1, "%")
 
         self.save_report_clf_type("Rocchio", accuracy, f1)
-        self.pre = pre
 
-    def DecisionTree(self):
         print("DecisionTree")
-        clf = DecisionTreeClassifier(
-            random_state=len(self.parSer.dsp_types))
-
-        clf.fit(self.dsp_train, self.Classification_train)
+        clf = self.read_model_clf_type("DecisionTree")
         pre = clf.predict(self.dsp_valid)
 
         accuracy = accuracy_score(self.Classification_valid, pre)*100
@@ -377,231 +421,66 @@ class clfAnalysis:
         print("-> F1: ", f1, "%")
 
         self.save_report_clf_type("DecisionTree", accuracy, f1)
-        self.pre = pre
-
-        # p_train = 0.8  # Porcentaje de particion
-        # trainc, testc, trc, tec = train_test_split(
-        #     descriptores, labels, test_size=1-p_train)  # Aleatorio
-
-        # p_train = 0.6  # Porcentaje de particion
-        # train, prub, tr, pr = train_test_split(
-        #     descriptores, labels, test_size=1-p_train)  # Aleatorio
-        # p_train = 0.5  # Porcentaje de particion
-        # adjust, test, ad, te = train_test_split(
-        #     prub, pr, test_size=1-p_train)  # Aleatorio
-
-    def Ajuste(self):
-
-        # KNN
-        # 300 se ve la caida
-        # 10
-        """
-        a=[]
-        i=40;
-        while(i<100):
-            neigh = KNeighborsClassifier(n_neighbors=i)
-            neigh.fit(train, tr)
-            pre=neigh.predict(adjust)
-            a.append(accuracy_score(ad,pre)*100)
-            i=i+1
-            print(i)
-        plt.plot(a)
-        plt.show()
-        # 16
-        """
-        neigh = KNeighborsClassifier(n_neighbors=16)
-        neigh.fit(train, tr)
-        pre = neigh.predict(adjust)
-        print("Accuracy: ", accuracy_score(ad, pre)*100, "%")
-        print("F1: ", f1_score(ad, pre, average=None)*100, "%")
-
-        pre = neigh.predict(test)
-        print("Accuracy: ", accuracy_score(te, pre)*100, "%")
-        print("F1: ", f1_score(te, pre, average=None)*100, "%")
-        a4 = accuracy_score(te, pre)*100
-        b4 = f1_score(te, pre, average=None)*100
-
-        # DecisionTree
-        """
-        a=[]
-        i=1;
-        while(i<50):
-            clf = DecisionTreeClassifier(random_state=i)
-            clf.fit(train, tr)
-            pre=clf.predict(adjust)
-            a.append(accuracy_score(ad,pre)*100)
-            i=i+1
-        plt.plot(a)
-        plt.show()
-        """
-        neigh = DecisionTreeClassifier(random_state=40)
-        neigh.fit(train, tr)
-        pre = neigh.predict(adjust)
-        print("Accuracy: ", accuracy_score(ad, pre)*100, "%")
-        print("F1: ", f1_score(ad, pre, average=None)*100, "%")
-
-        pre = neigh.predict(test)
-        print("Accuracy: ", accuracy_score(te, pre)*100, "%")
-        print("F1: ", f1_score(te, pre, average=None)*100, "%")
-        a5 = accuracy_score(te, pre)*100
-        b5 = f1_score(te, pre, average=None)*100
-
-        # RandomForest
-        """
-        a=[]
-        i=1;
-        while(i<50):
-            clf = RandomForestClassifier(max_depth=i, random_state=0)
-            clf.fit(train, tr)
-            pre=clf.predict(adjust)
-            a.append(accuracy_score(ad,pre)*100)
-            i=i+1
-        plt.plot(a)
-        plt.show()
-        """
-        neigh = RandomForestClassifier(max_depth=21, random_state=0)
-        neigh.fit(train, tr)
-        pre = neigh.predict(adjust)
-        print("Accuracy: ", accuracy_score(ad, pre)*100, "%")
-        print("F1: ", f1_score(ad, pre, average=None)*100, "%")
-
-        pre = neigh.predict(test)
-        print("Accuracy: ", accuracy_score(te, pre)*100, "%")
-        print("F1: ", f1_score(te, pre, average=None)*100, "%")
-        a6 = accuracy_score(te, pre)*100
-        b6 = f1_score(te, pre, average=None)*100
-
-        # Adaboost
-        """
-        a=[]
-        i=1;
-        while(i<50):
-            clf = AdaBoostClassifier(n_estimators=i, random_state=0)
-            clf.fit(train, tr)
-            pre=clf.predict(adjust)
-            a.append(accuracy_score(ad,pre)*100)
-            i=i+1
-        plt.plot(a)
-        plt.show()
-        """
-        neigh = AdaBoostClassifier(n_estimators=35, random_state=0)
-        neigh.fit(train, tr)
-        pre = neigh.predict(adjust)
-        print("Accuracy: ", accuracy_score(ad, pre)*100, "%")
-        print("F1: ", f1_score(ad, pre, average=None)*100, "%")
-
-        pre = neigh.predict(test)
-        print("Accuracy: ", accuracy_score(te, pre)*100, "%")
-        print("F1: ", f1_score(te, pre, average=None)*100, "%")
-        a7 = accuracy_score(te, pre)*100
-        b7 = f1_score(te, pre, average=None)*100
-
-        # Passive Aggressive
-        """
-        a=[]
-        i=1;
-        while(i<1001):
-            clf = PassiveAggressiveClassifier(max_iter=i, random_state=0,tol=1e-3)
-            clf.fit(train, tr)
-            pre=clf.predict(adjust)
-            a.append(accuracy_score(ad,pre)*100)
-            print(i)
-            i=i+1
-        plt.plot(a)
-        plt.show()
-        """
-        neigh = PassiveAggressiveClassifier(
-            max_iter=2, random_state=0, tol=1e-3)
-        neigh.fit(train, tr)
-        pre = neigh.predict(adjust)
-        print("Accuracy: ", accuracy_score(ad, pre)*100, "%")
-        print("F1: ", f1_score(ad, pre, average=None)*100, "%")
-
-        pre = neigh.predict(test)
-        print("Accuracy: ", accuracy_score(te, pre)*100, "%")
-        print("F1: ", f1_score(te, pre, average=None)*100, "%")
-        a8 = accuracy_score(te, pre)*100
-        b8 = f1_score(te, pre, average=None)*100
-
-        # Gaussian Mixture Models
-
-        clf = GaussianMixture(n_components=2, random_state=0).fit(trainc)
-        pre = (clf.predict(testc))+1
-        print("Accuracy: ", accuracy_score(tec, pre)*100, "%")
-        print("F1: ", f1_score(tec, pre, average=None)*100, "%")
-        a9 = accuracy_score(tec, pre)*100
-        b9 = f1_score(tec, pre, average=None)*100
-
-        # K-Means
-
-        clf = KMeans(n_clusters=2, random_state=0).fit(trainc)
-        pre = (clf.predict(testc))+1
-        print("Accuracy: ", accuracy_score(tec, pre)*100, "%")
-        print("F1: ", f1_score(tec, pre, average=None)*100, "%")
-        a10 = accuracy_score(tec, pre)*100
-        b10 = f1_score(tec, pre, average=None)*100
-
-        # Guardar datos
-        import pandas as pd
-        from pandas import ExcelWriter
-        df = pd.DataFrame({'Clasificador': ['Bayesiano', 'Rochio', 'SVM', 'Knn', 'Arbol Decision', 'Random Forest', 'Adaboost', 'Pasivo agresivo', 'GMM', 'K-Means'],
-                           'Accuracy': [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10],
-                           'F1_Score_Clase_0': [b1[0], b2[0], b3[0], b4[0], b5[0], b6[0], b7[0], b8[0], b9[0], b10[0]],
-                           'F1_Score_Clase_1': [b1[1], b2[1], b3[1], b4[1], b5[1], b6[1], b7[1], b8[1], b9[1], b10[1], ]})
-        df = df[['Clasificador', 'Accuracy',
-                 'F1_Score_Clase_0', 'F1_Score_Clase_1']]
-        writer = ExcelWriter(
-            'C:/Users/juanl/Documents/Universidad - Posgrado/Semestres/Segundo Semestre/Teoría de aprendizaje de Máquinas/proyecto/ejemplo1.xlsx')
-        df.to_excel(writer, sheet_name='Completos', index=False)
-        writer.save()
-
 
 if __name__ == '__main__':
     clf_analysis = clfAnalysis()
 
-    print("Opcion_1: generar archivos dps")
+    print("Opcion_1: generar archivos dps train")
+    print("Opcion_2: generar archivos dps valid")
     print("")
-    print("Opcion_2: generar archivos clf")
-    print("Opcion_3: generar graficas clf")
+    print("Opcion_3: generar modelos clf")
+    print("Opcion_4: generar reporte clf")
+    print("")
+    print("Opcion_5: generar graficas clf")
     print("")
 
     opcion = input("opcion: ")
 
     if opcion == "1":
         print("="*10)
-        print("generar archivos dsp")
+        print("generar archivos dps train")
         print("")
-        print("Opcion_1: init_files_dsp")
+        print("Opcion_1: init_files_dsp_train")
         print("Opcion_x: salir")
         opcion = input("opcion: ")
         if opcion != "1":
             exit()
         print("")
-        clf_analysis.setting_dsp()
-        clf_analysis.read_data()
+        clf_analysis.setting_dsp_train()
+        clf_analysis.read_data_dsp_train()
         print("-"*10)
         radius_dsp = float(input("radius: "))
         print("-"*10)
-        clf_analysis.generate_dsp(radius_dsp)
+        clf_analysis.generate_dsp_train(radius_dsp)
     elif opcion == "2":
         print("="*10)
-        print("generar archivos clf")
+        print("generar archivos dps valid")
         print("")
-        clf_analysis.read_data_dsp()
-        clf_analysis.setting_clf()
+        print("Opcion_1: init_files_dsp_valid")
+        print("Opcion_x: salir")
+        opcion = input("opcion: ")
+        if opcion != "1":
+            exit()
+        print("")
+        clf_analysis.setting_dsp_valid()
+        clf_analysis.read_data_dsp_valid()
         print("-"*10)
-        clf_analysis.RandomForest()
-        print("")
-        clf_analysis.KNeighbors()
-        print("")
-        # clf_analysis.SVM()
-        print("")
-        clf_analysis.Gaussiano()
-        print("")
-        clf_analysis.Rocchio()
-        print("")
-        clf_analysis.DecisionTree()
+        radius_dsp = float(input("radius: "))
+        print("-"*10)
+        clf_analysis.generate_dsp_valid(radius_dsp)
     elif opcion == "3":
+        print("="*10)
+        print("generar modelos clf")
+        print("")
+        clf_analysis.read_data_dsp_train()
+        clf_analysis.generate_clf_models()
+    elif opcion == "4":
+        print("="*10)
+        print("generar reporte clf")
+        print("")
+        clf_analysis.read_data_dsp_valid()
+        clf_analysis.generate_report_clf()
+    elif opcion == "5":
         print("="*10)
         print("generar graficas clf")
         print("")
