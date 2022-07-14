@@ -361,7 +361,7 @@ class clfAnalysis:
         print("-> Accuracy: ", accuracy, "%")
         print("-> F1: ", f1, "%")
 
-        self.save_clf_report_type("RandomForest", accuracy, f1)
+        self.save_report_clf_type("RandomForest", accuracy, f1)
 
         print("KNeighbors")
         clf = self.read_model_clf_type("KNeighbors")
