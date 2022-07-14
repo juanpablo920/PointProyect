@@ -192,9 +192,6 @@ class clfAnalysis:
         file_base += self.parSer.prefix
         file_base += "pointProyect/clfAnalysis/data/models_clf/"
 
-        print(file_base)
-        print(clf_type)
-
         file = file_base + clf_type + ".pkl"
         
         joblib.dump(clf,file)
