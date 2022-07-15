@@ -423,6 +423,33 @@ class clfAnalysis:
 
         self.save_report_clf_type("DecisionTree", accuracy, f1)
 
+    def results_PCD_validation(self):
+        print("results_PCD_validation")
+        print(">"*10)
+
+        print("RandomForest")
+        clf = self.read_model_clf_type("RandomForest")
+        pre = clf.predict(self.dsp_valid)
+
+        accuracy = accuracy_score(self.Classification_valid, pre)*100
+        f1 = f1_score(self.Classification_valid, pre, average=None)*100
+
+        print("-> Accuracy: ", accuracy, "%")
+        print("-> F1: ", f1, "%")
+
+        print("save_clf_results")
+        file = ""
+        file += self.parSer.prefix
+        file += "pointProyect/data/results/"
+        file += "clf_" + self.parSer.data_file_valid
+
+        with open(file, 'w') as f:
+            f.write("X Y Z Classification\n")
+            for idx, XYZ in enumerate(self.pcd_valid.points):
+                X, Y, Z = XYZ
+                f.write(str(X)+" "+str(Y)+" "+str(Z) +
+                        " "+str(pre[idx])+"\n")
+
 if __name__ == '__main__':
     clf_analysis = clfAnalysis()
 
@@ -486,12 +513,10 @@ if __name__ == '__main__':
         print("="*10)
         print("generar graficas clf")
         print("")
-        clf_analysis.read_data()
-        clf_analysis.read_data_dsp()
-        print("-"*10)
-        clf_analysis.RandomForest()
-        print("-"*10)
-        clf_analysis.save_clf_results()
+        clf_analysis.read_data_valid()
+        clf_analysis.read_data_dsp_valid()
+        clf_analysis.results_PCD_validation()
+     
     else:
         print("="*10)
         print("no es una opcion '{opcion}'")
