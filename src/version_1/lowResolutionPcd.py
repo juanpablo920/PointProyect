@@ -1,14 +1,14 @@
 import numpy as np
 import open3d as o3d
 import pandas as pd
-from version_2.params import ParamServer
+from params import ParamServer
 
 parSer = ParamServer()
 
 pwd_file = ""
 pwd_file += parSer.prefix
-pwd_file += "pointProyect/data/training/"
-file = pwd_file + parSer.data_file_train
+pwd_file += "pointProyect/data/validation/"
+file = pwd_file + parSer.data_file_valid
 
 data = pd.read_csv(file, sep=" ", header=0)
 Classification = np.array(data.Classification)/100.0
