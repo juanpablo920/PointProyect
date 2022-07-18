@@ -3,7 +3,7 @@ class ParamServer:
         # /home/pocampo/
         # /home/sirui/pi_ws/src/
         # /home/avila/Documentos/
-        # /home/juanpablo
+        # /home/juanpablo/
         self.prefix = "/home/pocampo/"
 
         # example_train
