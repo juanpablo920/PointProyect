@@ -50,7 +50,7 @@ class clustering:
 
         print("cluster")
         silueta = []
-        for k in range(2, 50):
+        for k in range(3, 50):
             print("K: ", k)
             kmeans = KMeans(n_clusters=k).fit(self.pcd)
             labels = kmeans.labels_
