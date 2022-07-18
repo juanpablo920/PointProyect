@@ -28,7 +28,7 @@ lowPcd_xyz = pcd_xyz.uniform_down_sample(every_k_points)
 print("low datos:", len(lowPcd_xyz.points))
 
 name_x = (
-    parSer.data_file_train[:len(parSer.data_file_train)-4]+"_low_"+str(every_k_points)+".txt")
+    parSer.data_file_valid[:len(parSer.data_file_valid)-4]+"_low_"+str(every_k_points)+".txt")
 
 file = pwd_file + name_x
 with open(file, 'w') as f:
