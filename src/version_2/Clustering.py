@@ -34,6 +34,7 @@ class clustering:
         print(self.pcd)
 
         print("datos:", self.pcd.shape)
+        print("File: ", file)
 
     def cluster(self):
 
