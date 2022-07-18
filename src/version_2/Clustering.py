@@ -21,16 +21,14 @@ class clustering:
         print("read_data")
         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/data/training/"
-        file += self.parSer.data_file_train
+        file += "pointProyect/data/validation/"
+        file += self.parSer.data_file_valid
 
         data = pd.read_csv(file, sep=" ", header=0)
         self.Classification = np.array(data.Classification)
         
         indices = data[data['Classification'] == 2].index
         data = data.drop(indices)
-
-        print("Hola")
 
         self.pcd = data.to_numpy()
         print(self.pcd)
