@@ -72,8 +72,8 @@ class clustering:
         plt.xlabel('Clústeres')
         plt.ylabel('Puntaje de la silueta')
         plt.title('Metodo de la Silueta')
-        plt.show()
-        # plt.savefig("Silueta_vs_Clases.png")
+        #plt.show()
+        plt.savefig("Silueta_vs_Clases.png")
 
 
 if __name__ == '__main__':
