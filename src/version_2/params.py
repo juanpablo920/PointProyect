@@ -11,8 +11,8 @@ class ParamServer:
 
         self.dsp_types = ["L", "P", "S", "O", "A", "E", "C"]  # Sum
 
-        self.data_file_train = "Nataima_citricos_etiquetado_training_34arboles.txt"
-        self.data_file_valid = "Nataima_citricos_etiquetado_validation_15arboles.txt"
+        self.data_file_train = "PCD_NIR_training_4M_arbol_suelo.txt"
+        self.data_file_valid = "PCD_NIR_validation_4M_arbol_suelo.txt"
 
         self.clf_P_train = 0.7  # Porcentaje de particion
         self.clf_P_adjust = (1-self.clf_P_train)/(2)
