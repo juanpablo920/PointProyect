@@ -27,6 +27,8 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 
+from sklearn.metrics import silhouette_score
+
 
 class clfAnalysis:
 
@@ -127,6 +129,26 @@ class clfAnalysis:
         clf = joblib.load(file)
         return clf
 
+    def read_results_PCD_validation(self):
+        print("read_results_PCD_validation")
+        file = ""
+        file += self.parSer.prefix
+        file += "pointProyect/clfAnalysis/data/results_PCD_validation/"
+        file += "clf_" + self.parSer.data_file_valid
+
+        data = pd.read_csv(file, sep=" ", header=0)
+
+        indices = data[data['Classification'] == 2].index
+        data = data.drop(indices)
+        data = data.drop(['Classification'], axis=1)
+
+        self.pcd_results_validation = o3d.geometry.PointCloud()
+        self.pcd_results_validation.points = o3d.utility.Vector3dVector(
+            data.to_numpy())
+
+        print("File: ", "clf_" + self.parSer.data_file_valid)
+        print("datos:", len(self.pcd_results_validation.points))
+
     def setting_dsp_train(self):
         print("setting_dsp_train")
         file_base = ""
@@ -187,14 +209,14 @@ class clfAnalysis:
         with open(file, 'a') as f:
             f.write(linea+"\n")
 
-    def save_model_clf_type(self,clf_type,clf):
+    def save_model_clf_type(self, clf_type, clf):
         file_base = ""
         file_base += self.parSer.prefix
         file_base += "pointProyect/clfAnalysis/data/models_clf/"
 
         file = file_base + clf_type + ".pkl"
-        
-        joblib.dump(clf,file)
+
+        joblib.dump(clf, file)
 
     def save_report_clf_type(self, clf, accuracy, f1):
         file_base = ""
@@ -215,7 +237,7 @@ class clfAnalysis:
         print("save_clf_results")
         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/data/results/"
+        file += "pointProyect/clfAnalysis/data/results_PCD_validation/"
         file += "clf_" + self.parSer.data_file_valid
 
         with open(file, 'w') as f:
@@ -320,12 +342,12 @@ class clfAnalysis:
             max_depth=len(self.parSer.dsp_types),
             random_state=0)
         clf.fit(self.dsp_train, self.Classification_train)
-        self.save_model_clf_type("RandomForest",clf)
-        
+        self.save_model_clf_type("RandomForest", clf)
+
         print("KNeighbors")
         clf = KNeighborsClassifier(n_neighbors=len(self.parSer.dsp_types))
         clf.fit(self.dsp_train, self.Classification_train)
-        self.save_model_clf_type("KNeighbors",clf)
+        self.save_model_clf_type("KNeighbors", clf)
 
         # print("SVM")
         # clf = svm.SVC()
@@ -335,17 +357,17 @@ class clfAnalysis:
         print("Gaussiano")
         clf = GaussianNB()
         clf.fit(self.dsp_train, self.Classification_train)
-        self.save_model_clf_type("Gaussiano",clf)
+        self.save_model_clf_type("Gaussiano", clf)
 
         print("Rocchio")
         clf = NearestCentroid()
         clf.fit(self.dsp_train, self.Classification_train)
-        self.save_model_clf_type("Rocchio",clf)
+        self.save_model_clf_type("Rocchio", clf)
 
         print("DecisionTree")
         clf = DecisionTreeClassifier(random_state=len(self.parSer.dsp_types))
         clf.fit(self.dsp_train, self.Classification_train)
-        self.save_model_clf_type("DecisionTree",clf)
+        self.save_model_clf_type("DecisionTree", clf)
 
     def generate_report_clf(self):
         print("generate_report_clf")
@@ -450,6 +472,47 @@ class clfAnalysis:
                 f.write(str(X)+" "+str(Y)+" "+str(Z) +
                         " "+str(pre[idx])+"\n")
 
+    def individual_tree_segmentation(self, min_num_tree, max_num_tree):
+        print("individual_tree_segmentation")
+        print(">"*10)
+        print("-> lowResolutionPcd")
+        lowPcd_xyz = self.pcd_results_validation.uniform_down_sample(10)
+        lowPcd_xyz = np.array(lowPcd_xyz.points)
+        print("-> low datos:", lowPcd_xyz.shape)
+
+        print("-> cluster")
+        indices_silueta = []
+        for k in range(min_num_tree, max_num_tree):
+            print("-> K: ", k)
+
+            kmeans = KMeans(n_clusters=k).fit(lowPcd_xyz)
+            Classification_cluster = kmeans.labels_
+
+            tmp_silueta = silhouette_score(
+                lowPcd_xyz,
+                Classification_cluster,
+                metric='euclidean')
+
+            indices_silueta.append(tmp_silueta)
+        
+        max_silueta = np.amax(indices_silueta)
+        posMax_silueta = np.where(indices_silueta == max_silueta)
+
+        print(posMax_silueta)
+        print(posMax_silueta+2)
+
+        aa = list(range(2, 50))
+
+        print(len(indices_silueta))
+        print(len(aa))
+
+        plt.plot(aa, indices_silueta, 'b')
+        plt.xlabel('Clústeres')
+        plt.ylabel('Puntaje de la silueta')
+        plt.title('Metodo de la Silueta')
+        #plt.show()
+        plt.savefig("Silueta_vs_Clases.png")
+
 if __name__ == '__main__':
     clf_analysis = clfAnalysis()
 
@@ -458,9 +521,9 @@ if __name__ == '__main__':
     print("")
     print("Opcion_3: generar modelos clf")
     print("Opcion_4: generar reporte clf")
+    print("Opcion_5: generar nube de puntos clasificada")
     print("")
-    print("Opcion_5: generar graficas clf")
-    print("")
+    print("Opcion_6: segmentación individual de árboles")
 
     opcion = input("opcion: ")
 
@@ -511,12 +574,22 @@ if __name__ == '__main__':
         clf_analysis.generate_report_clf()
     elif opcion == "5":
         print("="*10)
-        print("generar graficas clf")
+        print("generar nube de puntos clasificada")
         print("")
         clf_analysis.read_data_valid()
         clf_analysis.read_data_dsp_valid()
         clf_analysis.results_PCD_validation()
-     
+    elif opcion == "6":
+        print("="*10)
+        print("segmentación individual de árboles")
+        clf_analysis.read_results_PCD_validation()
+        print("-"*10)
+        print("numero de arboles aprox")
+        min_num_tree = float(input("de: "))
+        max_num_tree = float(input("a: "))
+        print("-"*10)
+        clf_analysis.individual_tree_segmentation(min_num_tree, max_num_tree)
+        print("")
     else:
         print("="*10)
         print("no es una opcion '{opcion}'")
