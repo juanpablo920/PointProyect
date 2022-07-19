@@ -233,20 +233,6 @@ class clfAnalysis:
         with open(file, 'a') as f:
             f.write(linea+"\n")
 
-    def save_clf_results(self):
-        print("save_clf_results")
-        file = ""
-        file += self.parSer.prefix
-        file += "pointProyect/clfAnalysis/data/results_PCD_validation/"
-        file += "clf_" + self.parSer.data_file_valid
-
-        with open(file, 'w') as f:
-            f.write("X Y Z Classification\n")
-            for idx, XYZ in enumerate(self.pcd_valid.points):
-                X, Y, Z = XYZ
-                f.write(str(X)+" "+str(Y)+" "+str(Z) +
-                        " "+str(self.pre[idx])+"\n")
-
     def calculo_valores_propios(self, matricesCov):
         val_propio_cov = np.linalg.eigvals(matricesCov)
         val_propio = np.sort(val_propio_cov)
@@ -462,7 +448,7 @@ class clfAnalysis:
         print("save_clf_results")
         file = ""
         file += self.parSer.prefix
-        file += "pointProyect/data/results/"
+        file += "pointProyect/clfAnalysis/data/results_PCD_validation/"
         file += "clf_" + self.parSer.data_file_valid
 
         with open(file, 'w') as f:
@@ -494,7 +480,7 @@ class clfAnalysis:
                 metric='euclidean')
 
             indices_silueta.append(tmp_silueta)
-        
+
         max_silueta = np.amax(indices_silueta)
         posMax_silueta = np.where(indices_silueta == max_silueta)
 
@@ -510,8 +496,9 @@ class clfAnalysis:
         plt.xlabel('Clústeres')
         plt.ylabel('Puntaje de la silueta')
         plt.title('Metodo de la Silueta')
-        #plt.show()
+        # plt.show()
         plt.savefig("Silueta_vs_Clases.png")
+
 
 if __name__ == '__main__':
     clf_analysis = clfAnalysis()
