@@ -53,6 +53,7 @@ class clfAnalysis:
         self.pcd_train.points = o3d.utility.Vector3dVector(data.to_numpy())
 
         print("-> datos_train:", len(self.pcd_train.points))
+        print("")
 
     def read_data_valid(self):
         print("read_data")
@@ -72,6 +73,7 @@ class clfAnalysis:
         self.pcd_valid.points = o3d.utility.Vector3dVector(data.to_numpy())
 
         print("-> datos_valid:", len(self.pcd_valid.points))
+        print("")
 
     def read_data_dsp_train(self):
         print("read_data_dsp_train")
@@ -95,6 +97,7 @@ class clfAnalysis:
 
         print("-> Classification_train:", len(self.Classification_train))
         print("-> dsp_train:", self.dsp_train.shape)
+        print("")
 
     def read_data_dsp_valid(self):
         print("read_data_dsp_valid")
@@ -118,6 +121,7 @@ class clfAnalysis:
 
         print("-> datos_Classification_valid:", len(self.Classification_valid))
         print("-> dsp_valid:", self.dsp_valid.shape)
+        print("")
 
     def read_model_clf_type(self, clf_type):
         file_base = ""
@@ -146,8 +150,9 @@ class clfAnalysis:
         self.pcd_results_validation.points = o3d.utility.Vector3dVector(
             data.to_numpy())
 
-        print("File: ", "clf_" + self.parSer.data_file_valid)
-        print("datos:", len(self.pcd_results_validation.points))
+        print("-> File: ", "clf_" + self.parSer.data_file_valid)
+        print("-> datos:", len(self.pcd_results_validation.points))
+        print("")
 
     def setting_dsp_train(self):
         print("setting_dsp_train")
@@ -433,9 +438,8 @@ class clfAnalysis:
 
     def results_PCD_validation(self):
         print("results_PCD_validation")
-        print(">"*10)
 
-        print("RandomForest")
+        print("-> RandomForest")
         clf = self.read_model_clf_type("RandomForest")
         pre = clf.predict(self.dsp_valid)
 
@@ -445,7 +449,7 @@ class clfAnalysis:
         print("-> Accuracy: ", accuracy, "%")
         print("-> F1: ", f1, "%")
 
-        print("save_clf_results")
+        print("-> save_clf_results")
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/clfAnalysis/data/results_PCD_validation/"
@@ -460,7 +464,7 @@ class clfAnalysis:
 
     def individual_tree_segmentation(self, min_num_tree, max_num_tree):
         print("individual_tree_segmentation")
-        print(">"*10)
+
         print("-> lowResolutionPcd")
         lowPcd_xyz = self.pcd_results_validation.uniform_down_sample(10)
         lowPcd_xyz = np.array(lowPcd_xyz.points)
@@ -468,10 +472,12 @@ class clfAnalysis:
 
         print("-> cluster")
         indices_silueta = []
-        for k in range(min_num_tree, max_num_tree):
-            print("-> K: ", k)
+        numbers_tree = []
+        for tmp_num_tree in range(min_num_tree, max_num_tree+1):
+            print("")
+            print("-> numero de arboles: ", tmp_num_tree)
 
-            kmeans = KMeans(n_clusters=k).fit(lowPcd_xyz)
+            kmeans = KMeans(n_clusters=tmp_num_tree).fit(lowPcd_xyz)
             Classification_cluster = kmeans.labels_
 
             tmp_silueta = silhouette_score(
@@ -479,30 +485,55 @@ class clfAnalysis:
                 Classification_cluster,
                 metric='euclidean')
 
+            numbers_tree.append(tmp_num_tree)
             indices_silueta.append(tmp_silueta)
+
+            print("-> silueta: ", tmp_silueta)
+        print("")
 
         max_silueta = np.amax(indices_silueta)
         posMax_silueta = np.where(indices_silueta == max_silueta)
+        num_tree = numbers_tree[posMax_silueta[0][0]]
 
-        print(posMax_silueta)
-        print(posMax_silueta+2)
+        print("-> numero de arboles calculados: ", num_tree)
+        print("")
 
-        aa = list(range(2, 50))
+        file_img = ""
+        file_img += self.parSer.prefix
+        file_img += "pointProyect/clfAnalysis/images/"
+        file_img += "Silueta_vs_Clases.png"
 
-        print(len(indices_silueta))
-        print(len(aa))
-
-        plt.plot(aa, indices_silueta, 'b')
+        plt.plot(numbers_tree, indices_silueta, 'b')
         plt.xlabel('Clústeres')
         plt.ylabel('Puntaje de la silueta')
         plt.title('Metodo de la Silueta')
-        # plt.show()
-        plt.savefig("Silueta_vs_Clases.png")
+        plt.savefig(file_img)
+
+        print("-> individualizing")
+
+        pcd_results_validation = np.array(self.pcd_results_validation.points)
+
+        kmeans = KMeans(n_clusters=num_tree).fit(pcd_results_validation)
+        Classification_cluster = kmeans.labels_
+
+        print("-> save_PCD_individualized")
+        file = ""
+        file += self.parSer.prefix
+        file += "pointProyect/clfAnalysis/data/results_PCD_validation/"
+        file += "individual_" + self.parSer.data_file_valid
+
+        with open(file, 'w') as f:
+            f.write("X Y Z Classification\n")
+            for idx, XYZ in enumerate(self.pcd_results_validation.points):
+                X, Y, Z = XYZ
+                f.write(str(X)+" "+str(Y)+" "+str(Z) +
+                        " "+str(Classification_cluster[idx])+"\n")
 
 
 if __name__ == '__main__':
     clf_analysis = clfAnalysis()
 
+    print("")
     print("Opcion_1: generar archivos dps train")
     print("Opcion_2: generar archivos dps valid")
     print("")
@@ -511,6 +542,7 @@ if __name__ == '__main__':
     print("Opcion_5: generar nube de puntos clasificada")
     print("")
     print("Opcion_6: segmentación individual de árboles")
+    print("")
 
     opcion = input("opcion: ")
 
@@ -569,12 +601,12 @@ if __name__ == '__main__':
     elif opcion == "6":
         print("="*10)
         print("segmentación individual de árboles")
+        print("")
         clf_analysis.read_results_PCD_validation()
-        print("-"*10)
         print("numero de arboles aprox")
-        min_num_tree = float(input("de: "))
-        max_num_tree = float(input("a: "))
-        print("-"*10)
+        min_num_tree = int(input("-> De: "))
+        max_num_tree = int(input("-> A: "))
+        print("")
         clf_analysis.individual_tree_segmentation(min_num_tree, max_num_tree)
         print("")
     else:
