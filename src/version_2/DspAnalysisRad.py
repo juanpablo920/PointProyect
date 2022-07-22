@@ -128,11 +128,15 @@ class dpsAnalysis:
         with open(file, 'a') as f:
             f.write(str(radius)+"\n")
 
-    def generate_P123(self, radius_init, radius_finish, radius_steps):
+    def generate_P123(self):
         print("generate_P123")
+        radius_init = float(input("-> radius_init: "))
+        radius_finish = float(input("-> radius_finish: "))
+        radius_steps = float(input("-> radius_steps: "))
+
         for radius in np.arange(radius_init, radius_finish, radius_steps):
             time_inicio = tm.time()
-            print(">"*10)
+            print("")
             print("-> radius: ", radius)
             print("-> calculo de matrices de covarianza")
             self.pcd.estimate_covariances(
@@ -191,7 +195,7 @@ class dpsAnalysis:
 
         self.save_dsp_radius(radius)
 
-    def graph_P123_dps_type(self, dps_type, P12,radius):
+    def graph_P123_dps_type(self, dps_type, P12, radius):
         pwd_imagen = ""
         pwd_imagen += self.parSer.prefix
         pwd_imagen += "pointProyect/dpsAnalysis/radius/images/graphics_P123/"
@@ -260,11 +264,10 @@ class dpsAnalysis:
         name_files.remove("P_time.txt")
 
         list_averages_P = []
-        print("")
         for name_file in name_files:
             data = pd.read_csv(pwd_files+name_file, sep=" ", header=0)
             print("--> ", name_file)
-            
+
             radius = np.array(data.radius)
 
             #Arbol - suelo
@@ -281,9 +284,9 @@ class dpsAnalysis:
         radius = np.array(times.radius)
         time = np.array(times.time)
         self.graph_time_P(time, radius)
-        
+
         averages_P = np.sum(list_averages_P, axis=0)/len(list_averages_P)
-        
+
         self.graph_selection_Radius(averages_P, radius)
 
     def graph_gaussiana_dps_type(self, dps_type, dsp_tree, dsp_ground):
@@ -344,7 +347,7 @@ class dpsAnalysis:
             dsp_ground = np.sort(dsp_values[pos_ground])
 
             dps_type = name_file[:len(name_file)-4]
-            
+
             self.graph_gaussiana_dps_type(dps_type, dsp_tree, dsp_ground)
             self.graph_histograms_dps(dps_type, dsp_values)
 
@@ -368,22 +371,17 @@ if __name__ == '__main__':
         print("Opcion_1: init_files_P123")
         print("Opcion_x: continue")
         opcion = input("opcion: ")
+        print("")
         if opcion == "1":
             dps_analysis.setting_P123()
-        print("")
+            print("")
         dps_analysis.read_data()
-        print("-"*10)
-        radius_init = float(input("radius_init: "))
-        radius_finish = float(input("radius_finish: "))
-        radius_steps = float(input("radius_steps: "))
-        print("-"*10)
-        dps_analysis.generate_P123(
-            radius_init, radius_finish, radius_steps)
+        print("")
+        dps_analysis.generate_P123()
     elif opcion == "2":
         print("="*10)
         print("generar graficas P123")
         dps_analysis.graphics_P123()
-        print("")
     elif opcion == "3":
         print("="*10)
         print("generar archivos dsp")
