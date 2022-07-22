@@ -457,7 +457,7 @@ class clfAnalysis:
 
         print("-> lowResolutionPcd")
         lowPcd_xyz = self.pcd_results_validation.uniform_down_sample(10)
-        lowPcd_xyz = np.array(lowPcd_xyz.points)[:, :2]
+        lowPcd_xyz = np.array(lowPcd_xyz.points)  # [:, :2]
         print("-> low datos:", lowPcd_xyz.shape)
 
         print("-> cluster")
@@ -510,7 +510,7 @@ class clfAnalysis:
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/clfAnalysis/data/results_PCD_validation/"
-        file += "individual_xy_" + self.parSer.data_file_valid
+        file += "individual_xyz_" + self.parSer.data_file_valid
 
         with open(file, 'w') as f:
             f.write("X Y Z Classification\n")
