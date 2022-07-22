@@ -177,10 +177,9 @@ class dpsAnalysis:
             time = tm.time() - time_inicio
             self.save_P123_time(radius, time)
 
-    def generate_dsp(self, radius):
+    def generate_dsp(self):
         print("generate_dsp")
-        print(">"*10)
-        print("-> radius: ", radius)
+        radius = float(input("-> radius: "))
         print("-> calculo de matrices de covarianza")
         self.pcd.estimate_covariances(
             search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
@@ -393,17 +392,16 @@ if __name__ == '__main__':
             exit()
         print("")
         dps_analysis.setting_dsp()
+        print("")
         dps_analysis.read_data()
-        print("-"*10)
-        radius_dsp = float(input("radius: "))
-        print("-"*10)
-        dps_analysis.generate_dsp(radius_dsp)
+        print("")
+        dps_analysis.generate_dsp()
     elif opcion == "4":
         print("="*10)
         print("generar graficas dsp")
+        print("")
         dps_analysis.read_data()
         dps_analysis.graphics_dsp()
-        print("")
     else:
         print("="*10)
         print("no es una opcion '{opcion}'")
