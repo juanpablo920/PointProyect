@@ -510,7 +510,7 @@ class clfAnalysis:
         file = ""
         file += self.parSer.prefix
         file += "pointProyect/clfAnalysis/data/results_PCD_validation/"
-        file += "individual_" + self.parSer.data_file_valid
+        file += "individual_xyz_" + self.parSer.data_file_valid
 
         with open(file, 'w') as f:
             f.write("X Y Z Classification\n")
