@@ -131,7 +131,6 @@ class clfAnalysis:
         indices = data[data['Classification'] == 2].index
         data = data.drop(indices)
         data = data.drop(['Classification'], axis=1)
-        data = data.drop(['Z'], axis=1)
 
         self.pcd_results_validation = o3d.geometry.PointCloud()
         self.pcd_results_validation.points = o3d.utility.Vector3dVector(
@@ -458,7 +457,7 @@ class clfAnalysis:
 
         print("-> lowResolutionPcd")
         lowPcd_xyz = self.pcd_results_validation.uniform_down_sample(10)
-        lowPcd_xyz = np.array(lowPcd_xyz.points)
+        lowPcd_xyz = np.array(lowPcd_xyz.points)[:,2]
         print("-> low datos:", lowPcd_xyz.shape)
 
         print("-> cluster")
