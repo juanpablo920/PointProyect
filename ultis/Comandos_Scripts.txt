@@ -11,6 +11,8 @@
 source devel/setup.bash
 
 scp -r pocampo@172.19.18.35:/home/pocampo/pointProyect/dpsAnalysis /home/sirui/Documents/Johan_Avila
+scp -r pocampo@172.19.18.35:/home/pocampo/pointProyect/clfAnalysis /home/sirui/Documents/Johan_Avila
+
 scp -r pocampo@172.19.18.35:/home/pocampo/pointProyect/dpsAnalysis /home/juanocampo/Vídeos
 
 scp -r /home/sirui/Downloads/Training-20220426T235004Z-001/Training/* pocampo@172.19.18.35:/home/pocampo/pointProyect/data/training 
