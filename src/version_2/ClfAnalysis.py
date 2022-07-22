@@ -1,27 +1,17 @@
-import os
 import joblib
 import numpy as np
 import open3d as o3d
 import pandas as pd
 import matplotlib.pyplot as plt
-from scipy.stats import norm
-import time as tm
 from params import ParamServer
 
-from sklearn.preprocessing import StandardScaler
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
-from sklearn.decomposition import PCA
-from sklearn.pipeline import make_pipeline
-from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import AdaBoostClassifier
 from sklearn.neighbors import NearestCentroid
 from sklearn.linear_model import PassiveAggressiveClassifier
 from sklearn import svm
-from sklearn.mixture import GaussianMixture
 from sklearn.cluster import KMeans
 
 from sklearn.metrics import accuracy_score
@@ -53,7 +43,6 @@ class clfAnalysis:
         self.pcd_train.points = o3d.utility.Vector3dVector(data.to_numpy())
 
         print("-> datos_train:", len(self.pcd_train.points))
-        print("")
 
     def read_data_valid(self):
         print("read_data")
@@ -73,7 +62,6 @@ class clfAnalysis:
         self.pcd_valid.points = o3d.utility.Vector3dVector(data.to_numpy())
 
         print("-> datos_valid:", len(self.pcd_valid.points))
-        print("")
 
     def read_data_dsp_train(self):
         print("read_data_dsp_train")
@@ -97,7 +85,6 @@ class clfAnalysis:
 
         print("-> Classification_train:", len(self.Classification_train))
         print("-> dsp_train:", self.dsp_train.shape)
-        print("")
 
     def read_data_dsp_valid(self):
         print("read_data_dsp_valid")
@@ -121,7 +108,6 @@ class clfAnalysis:
 
         print("-> datos_Classification_valid:", len(self.Classification_valid))
         print("-> dsp_valid:", self.dsp_valid.shape)
-        print("")
 
     def read_model_clf_type(self, clf_type):
         file_base = ""
@@ -152,7 +138,6 @@ class clfAnalysis:
 
         print("-> File: ", "clf_" + self.parSer.data_file_valid)
         print("-> datos:", len(self.pcd_results_validation.points))
-        print("")
 
     def setting_dsp_train(self):
         print("setting_dsp_train")
@@ -277,10 +262,9 @@ class clfAnalysis:
             dsp_value = e1 + e2 + e3
         return dsp_value
 
-    def generate_dsp_train(self, radius):
+    def generate_dsp_train(self):
         print("generate_dsp_train")
-        print(">"*10)
-        print("-> radius: ", radius)
+        radius = float(input("-> radius: "))
         print("-> calculo de matrices de covarianza")
         self.pcd_train.estimate_covariances(
             search_param=o3d.geometry.KDTreeSearchParamRadius(radius=radius))
@@ -300,10 +284,9 @@ class clfAnalysis:
             self.save_dps("dsp_train", X, Y, Z,
                           Classification_tmp, dsp_values_tmp)
 
-    def generate_dsp_valid(self, radius):
+    def generate_dsp_valid(self):
         print("generate_dsp_valid")
-        print(">"*10)
-        print("-> radius: ", radius)
+        radius = float(input("-> radius: "))
         print("-> calculo de matrices de covarianza")
 
         self.pcd_valid.estimate_covariances(
@@ -326,16 +309,15 @@ class clfAnalysis:
 
     def generate_clf_models(self):
         print("generate_dsp_valid")
-        print(">"*10)
 
-        print("RandomForest")
+        print("-> RandomForest")
         clf = RandomForestClassifier(
             max_depth=len(self.parSer.dsp_types),
             random_state=0)
         clf.fit(self.dsp_train, self.Classification_train)
         self.save_model_clf_type("RandomForest", clf)
 
-        print("KNeighbors")
+        print("-> KNeighbors")
         clf = KNeighborsClassifier(n_neighbors=len(self.parSer.dsp_types))
         clf.fit(self.dsp_train, self.Classification_train)
         self.save_model_clf_type("KNeighbors", clf)
@@ -345,26 +327,25 @@ class clfAnalysis:
         # clf.fit(self.dsp_train, self.Classification_train)
         # self.save_model_clf_type("SVM",clf)
 
-        print("Gaussiano")
+        print("-> Gaussiano")
         clf = GaussianNB()
         clf.fit(self.dsp_train, self.Classification_train)
         self.save_model_clf_type("Gaussiano", clf)
 
-        print("Rocchio")
+        print("-> Rocchio")
         clf = NearestCentroid()
         clf.fit(self.dsp_train, self.Classification_train)
         self.save_model_clf_type("Rocchio", clf)
 
-        print("DecisionTree")
+        print("-> DecisionTree")
         clf = DecisionTreeClassifier(random_state=len(self.parSer.dsp_types))
         clf.fit(self.dsp_train, self.Classification_train)
         self.save_model_clf_type("DecisionTree", clf)
 
     def generate_report_clf(self):
         print("generate_report_clf")
-        print(">"*10)
 
-        print("RandomForest")
+        print("-> RandomForest")
         clf = self.read_model_clf_type("RandomForest")
         pre = clf.predict(self.dsp_valid)
 
@@ -373,10 +354,11 @@ class clfAnalysis:
 
         print("-> Accuracy: ", accuracy, "%")
         print("-> F1: ", f1, "%")
+        print("")
 
         self.save_report_clf_type("RandomForest", accuracy, f1)
 
-        print("KNeighbors")
+        print("-> KNeighbors")
         clf = self.read_model_clf_type("KNeighbors")
         pre = clf.predict(self.dsp_valid)
 
@@ -385,10 +367,11 @@ class clfAnalysis:
 
         print("-> Accuracy: ", accuracy, "%")
         print("-> F1: ", f1, "%")
+        print("")
 
         self.save_report_clf_type("KNeighbors", accuracy, f1)
 
-        # print("SVM")
+        # print("-> SVM")
         # clf = self.read_model_clf_type("SVM")
         # pre = clf.predict(self.dsp_valid)
 
@@ -397,10 +380,11 @@ class clfAnalysis:
 
         # print("-> Accuracy: ", accuracy, "%")
         # print("-> F1: ", f1, "%")
+        # print("")
 
         # self.save_report_clf_type("SVM", accuracy, f1)
 
-        print("Gaussiano")
+        print("-> Gaussiano")
         clf = self.read_model_clf_type("Gaussiano")
         pre = clf.predict(self.dsp_valid)
 
@@ -409,10 +393,11 @@ class clfAnalysis:
 
         print("-> Accuracy: ", accuracy, "%")
         print("-> F1: ", f1, "%")
+        print("")
 
         self.save_report_clf_type("Gaussiano", accuracy, f1)
 
-        print("Rocchio")
+        print("-> Rocchio")
         clf = self.read_model_clf_type("Rocchio")
         pre = clf.predict(self.dsp_valid)
 
@@ -421,10 +406,11 @@ class clfAnalysis:
 
         print("-> Accuracy: ", accuracy, "%")
         print("-> F1: ", f1, "%")
+        print("")
 
         self.save_report_clf_type("Rocchio", accuracy, f1)
 
-        print("DecisionTree")
+        print("-> DecisionTree")
         clf = self.read_model_clf_type("DecisionTree")
         pre = clf.predict(self.dsp_valid)
 
@@ -448,6 +434,7 @@ class clfAnalysis:
 
         print("-> Accuracy: ", accuracy, "%")
         print("-> F1: ", f1, "%")
+        print("")
 
         print("-> save_clf_results")
         file = ""
@@ -462,8 +449,11 @@ class clfAnalysis:
                 f.write(str(X)+" "+str(Y)+" "+str(Z) +
                         " "+str(pre[idx])+"\n")
 
-    def individual_tree_segmentation(self, min_num_tree, max_num_tree):
+    def individual_tree_segmentation(self):
         print("individual_tree_segmentation")
+        min_num_tree = int(input("-> numero de arboles aprox De: "))
+        max_num_tree = int(input("-> A: "))
+        print("")
 
         print("-> lowResolutionPcd")
         lowPcd_xyz = self.pcd_results_validation.uniform_down_sample(10)
@@ -557,11 +547,10 @@ if __name__ == '__main__':
             exit()
         print("")
         clf_analysis.setting_dsp_train()
+        print("")
         clf_analysis.read_data_train()
-        print("-"*10)
-        radius_dsp = float(input("radius: "))
-        print("-"*10)
-        clf_analysis.generate_dsp_train(radius_dsp)
+        print("")
+        clf_analysis.generate_dsp_train()
     elif opcion == "2":
         print("="*10)
         print("generar archivos dps valid")
@@ -573,42 +562,42 @@ if __name__ == '__main__':
             exit()
         print("")
         clf_analysis.setting_dsp_valid()
+        print("")
         clf_analysis.read_data_valid()
-        print("-"*10)
-        radius_dsp = float(input("radius: "))
-        print("-"*10)
-        clf_analysis.generate_dsp_valid(radius_dsp)
+        print("")
+        clf_analysis.generate_dsp_valid()
     elif opcion == "3":
         print("="*10)
         print("generar modelos clf")
         print("")
         clf_analysis.read_data_dsp_train()
+        print("")
         clf_analysis.generate_clf_models()
     elif opcion == "4":
         print("="*10)
         print("generar reporte clf")
         print("")
         clf_analysis.setting_report_clf()
+        print("")
         clf_analysis.read_data_dsp_valid()
+        print("")
         clf_analysis.generate_report_clf()
     elif opcion == "5":
         print("="*10)
         print("generar nube de puntos clasificada")
         print("")
         clf_analysis.read_data_valid()
+        print("")
         clf_analysis.read_data_dsp_valid()
+        print("")
         clf_analysis.results_PCD_validation()
     elif opcion == "6":
         print("="*10)
         print("segmentación individual de árboles")
         print("")
         clf_analysis.read_results_PCD_validation()
-        print("numero de arboles aprox")
-        min_num_tree = int(input("-> De: "))
-        max_num_tree = int(input("-> A: "))
         print("")
-        clf_analysis.individual_tree_segmentation(min_num_tree, max_num_tree)
-        print("")
+        clf_analysis.individual_tree_segmentation()
     else:
         print("="*10)
         print("no es una opcion '{opcion}'")
